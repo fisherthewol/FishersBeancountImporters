@@ -12,6 +12,7 @@ def pdf_to_text(filename: str):
         text += page.extract_text()
     return text
 
+
 tri_to_month = {
     "JAN": "01",
     "FEB": "02",
