@@ -3,6 +3,7 @@ import datetime
 from PyPDF2 import PdfReader
 from beancount.ingest import importer, cache
 from beancount.core import data
+from beancount.core import flags
 from beancount.core.amount import Amount
 from beancount.core.number import ZERO, D
 from beancount.ingest.importers.mixins import filing, identifier
@@ -52,6 +53,7 @@ class Importer(importer.ImporterProtocol):
         self.currency = "GBP"
         self.cachedPDF: str = None
         self.y2kFix = y2kfix
+        self.FLAG = flags.FLAG_WARNING
 
     def identify(self, file: cache._FileMemo) -> bool:
         """Check that is a PDF containing the text "Pay" and "ACCESS UK" """
