@@ -40,15 +40,15 @@ class Importer(importer.ImporterProtocol):
 
     def __init__(
             self,
-            incomeaccount: str,
+            salaryaccount: str,
             checkingaccount: str,
             y2kfix: str):
         """Initialise importer.
-        :parameter incomeaccount Account to book income into.
+        :parameter salaryaccount Account to book income into.
         :parameter checkingaccount Account receiving income.
         :parameter y2kfix First 2 digits of year for date (Payslip has y2k bug).
         """
-        self.incomeAccount = incomeaccount
+        self.salaryAccount = salaryaccount
         self.checkingAccount = checkingaccount
         self.currency = "GBP"
         self.cachedPDF: str = None
@@ -67,18 +67,52 @@ class Importer(importer.ImporterProtocol):
         return False
 
     def extract(self, file, existing_entries=None):
+        # Check for text of pdf
         if self.cachedPDF is None:
             self.cachedPDF = file.convert(pdf_to_text)
+        # Split into lines.
+        lines = self.cachedPDF.splitlines()
 
-        account = self.file_account(file)
-
-        entires = []
+        # Determine values for each posting.
+        netpay = list(
+            filter(
+                lambda line: line.startswith("Net Pay"),
+                lines))[0].split(' ')[3]
+        salary = list(
+            filter(
+                lambda line: line.startswith("Basic Salary"),
+                lines))[0].split(' ')[2]
+        pensionSingle = list(
+            filter(
+                lambda line: line.startswith("AEGON GPPP"),
+                lines))[0].split(' ')[3]
+        nationalInsurance = list(
+            filter(
+                lambda line: line.startswith("Employee NI"),
+                lines))[0].split(' ')[2]
 
         meta = data.new_metadata(file.name, 0)
-        meta['date'] = self.file_date(file)
+        meta['date']: datetime.date = self.file_date(file)
 
+        postings = [
+            data.Posting(
+                account=self.checkingAccount,
+                units=Amount()
+            )
+        ]
+        txn = data.Transaction(
+            meta=meta,
+            date=self.file_date(file),
+            flag=self.FLAG,
+            payee="SELF",
+            narration=f"Paycheck {meta['date'].day} {meta['date'].month} {meta['date'].year}",
+            postings=postings
+        )
 
-    def file_account(self, file): return self.incomeAccount
+        return [txn]
+
+    def file_account(self, file):
+        return self.salaryAccount
 
     def file_date(self, file):
         """Date is of format DD-MON-YY"""
@@ -89,7 +123,7 @@ class Importer(importer.ImporterProtocol):
         datelines = self.cachedPDF.splitlines()
         for line in datelines:
             if line.startswith("Payslip Date:"):
-                dateparts = line.split(' ')[1].split('-')
+                dateparts = line.split(' ')[2].split('-')
                 year = self.y2kFix + dateparts[2]
                 month = tri_to_month[dateparts[1]]
                 return datetime.date(int(year), int(month), int(dateparts[0]))
