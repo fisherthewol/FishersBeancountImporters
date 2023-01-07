@@ -1,3 +1,5 @@
+import datetime
+
 from PyPDF2 import PdfReader
 from beancount.ingest import importer, cache
 
@@ -10,15 +12,35 @@ def pdf_to_text(filename: str):
         text += page.extract_text()
     return text
 
+tri_to_month = {
+    "JAN": "01",
+    "FEB": "02",
+    "MAR": "03",
+    "APR": "04",
+    "MAY": "05",
+    "JUN": "06",
+    "JUL": "07",
+    "AUG": "08",
+    "SEP": "09",
+    "OCT": "10",
+    "NOV": "11",
+    "DEC": "12",
+}
+
 
 class Importer(importer.ImporterProtocol):
     """A Beancount importer for Access UK Payslips."""
 
-    def __init__(self, incomeaccount: str, checkingaccount: str):
+    def __init__(
+            self,
+            incomeaccount: str,
+            checkingaccount: str,
+            y2kfix: str):
         self.incomeAccount = incomeaccount
         self.checkingAccount = checkingaccount
         self.currency = "GBP"
-        self.cachedPDF = None
+        self.cachedPDF: str = None
+        self.y2kFix = y2kfix
 
     def identify(self, file: cache._FileMemo) -> bool:
         """Check that is a PDF containing the text "Pay" and "ACCESS UK" """
