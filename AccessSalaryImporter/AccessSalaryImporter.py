@@ -2,6 +2,11 @@ import datetime
 
 from PyPDF2 import PdfReader
 from beancount.ingest import importer, cache
+from beancount.core import data
+from beancount.core.amount import Amount
+from beancount.core.number import ZERO, D
+from beancount.ingest.importers.mixins import filing, identifier
+from beancount.utils.date_utils import parse_date_liberally
 
 
 def pdf_to_text(filename: str):
@@ -58,6 +63,18 @@ class Importer(importer.ImporterProtocol):
             return "PAY" in self.cachedPDF and "ACCESS UK" in self.cachedPDF
 
         return False
+
+    def extract(self, file, existing_entries=None):
+        if self.cachedPDF is None:
+            self.cachedPDF = file.convert(pdf_to_text)
+
+        account = self.file_account(file)
+
+        entires = []
+
+        meta = data.new_metadata(file.name, 0)
+        meta['date'] = self.file_date(file)
+
 
     def file_account(self, file): return self.incomeAccount
 
