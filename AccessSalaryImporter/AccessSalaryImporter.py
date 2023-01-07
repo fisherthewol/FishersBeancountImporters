@@ -62,6 +62,7 @@ class Importer(importer.ImporterProtocol):
     def file_account(self, file): return self.incomeAccount
 
     def file_date(self, file):
+        """Date is of format DD-MON-YY"""
         # Ensure that there is cached version of the file.
         if self.cachedPDF is None:
             self.cachedPDF = file.convert(pdf_to_text)
