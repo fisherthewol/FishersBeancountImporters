@@ -12,7 +12,7 @@ def pdf_to_text(filename: str):
     return text
 
 
-class AccessSalaryImporter(importer.ImporterProtocol):
+class Importer(importer.ImporterProtocol):
     """A Beancount importer for Access UK Payslips."""
 
     def __init__(self, incomeaccount: str, checkingaccount: str):
