@@ -1,6 +1,5 @@
 from PyPDF2 import PdfReader
 from beancount.ingest import importer, cache
-import re
 
 
 def pdf_to_text(filename: str):
@@ -27,6 +26,6 @@ class Importer(importer.ImporterProtocol):
 
         self.cachedPDF = file.convert(pdf_to_text)
         if self.cachedPDF:
-            return re.match('ACCESS UK', self.cachedPDF) is not None
+            return "ACCESS UK" in self.cachedPDF
 
         return False
