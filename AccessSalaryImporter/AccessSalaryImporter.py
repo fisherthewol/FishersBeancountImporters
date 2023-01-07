@@ -37,6 +37,11 @@ class Importer(importer.ImporterProtocol):
             incomeaccount: str,
             checkingaccount: str,
             y2kfix: str):
+        """Initialise importer.
+        :parameter incomeaccount Account to book income into.
+        :parameter checkingaccount Account receiving income.
+        :parameter y2kfix First 2 digits of year for date (Payslip has y2k bug).
+        """
         self.incomeAccount = incomeaccount
         self.checkingAccount = checkingaccount
         self.currency = "GBP"
