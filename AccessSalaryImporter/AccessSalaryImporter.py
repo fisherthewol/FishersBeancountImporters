@@ -84,7 +84,7 @@ class Importer(importer.ImporterProtocol):
         if self.cachedPDF is None:
             self.cachedPDF = file.convert(pdf_to_text)
 
-        datelines = self.cachedPDF.split('\n')  # Split into lines.
+        datelines = self.cachedPDF.splitlines()
         for line in datelines:
             if line.startswith("Payslip Date:"):
                 dateparts = line.split(' ')[1].split('-')
