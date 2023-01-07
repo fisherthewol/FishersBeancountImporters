@@ -21,11 +21,12 @@ class Importer(importer.ImporterProtocol):
         self.cachedPDF = None
 
     def identify(self, file: cache._FileMemo) -> bool:
+        """Check that is a PDF containing the text "Pay" and "ACCESS UK" """
         if file.mimetype() != 'application/pdf':
             return False
 
         self.cachedPDF = file.convert(pdf_to_text)
         if self.cachedPDF:
-            return "ACCESS UK" in self.cachedPDF
+            return "PAY" in self.cachedPDF and "ACCESS UK" in self.cachedPDF
 
         return False
