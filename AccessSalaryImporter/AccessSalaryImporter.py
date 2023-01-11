@@ -41,15 +41,15 @@ class Importer(importer.ImporterProtocol):
     def __init__(
             self,
             salaryaccount: str,
-            checkingaccount: str,
+            currentaccount: str,
             y2kfix: str):
         """Initialise importer.
         :parameter salaryaccount Account to book income into.
-        :parameter checkingaccount Account receiving income.
+        :parameter currentaccount Account receiving income.
         :parameter y2kfix First 2 digits of year for date (Payslip has y2k bug).
         """
         self.salaryAccount = salaryaccount
-        self.checkingAccount = checkingaccount
+        self.currentAccount = currentaccount
         self.currency = "GBP"
         self.cachedPDF: str = None
         self.y2kFix = y2kfix
@@ -95,9 +95,26 @@ class Importer(importer.ImporterProtocol):
         meta['date']: datetime.date = self.file_date(file)
 
         postings = [
+            # Income as seen in current account.
             data.Posting(
-                account=self.checkingAccount,
-                units=Amount()
+                account=self.currentAccount,
+                units=Amount(D(netpay), self.currency)
+            ),
+            data.Posting(
+                account=self.salaryAccount,
+                units=Amount(-D(salary), self.currency)
+            ),
+            data.Posting(
+                account="Assets:UK:Aegon:GPPP",
+                units=Amount(D(pensionSingle) * 2, self.currency)
+            ),
+            data.Posting(
+                account="Income:UK:Access:PensionMatch",
+                units=Amount(-D(pensionSingle), self.currency)
+            ),
+            data.Posting(
+                account="",
+                units=Amount(D(), self.currency)
             )
         ]
         txn = data.Transaction(
