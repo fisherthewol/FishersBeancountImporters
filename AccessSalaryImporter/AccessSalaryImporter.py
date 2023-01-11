@@ -105,16 +105,16 @@ class Importer(importer.ImporterProtocol):
                 units=Amount(-D(salary), self.currency)
             ),
             data.Posting(
-                account="Assets:UK:Aegon:GPPP",
-                units=Amount(D(pensionSingle) * 2, self.currency)
-            ),
-            data.Posting(
                 account="Income:UK:Access:PensionMatch",
                 units=Amount(-D(pensionSingle), self.currency)
             ),
             data.Posting(
-                account="",
-                units=Amount(D(), self.currency)
+                account="Assets:UK:Aegon:GPPP",
+                units=Amount(D(pensionSingle) * 2, self.currency)
+            ),
+            data.Posting(
+                account="Expenses:UK:TY2223:NationalInsurance",
+                units=Amount(D(nationalInsurance), self.currency)
             )
         ]
         txn = data.Transaction(
@@ -123,7 +123,9 @@ class Importer(importer.ImporterProtocol):
             flag=self.FLAG,
             payee="SELF",
             narration=f"Paycheck {meta['date'].day} {meta['date'].month} {meta['date'].year}",
-            postings=postings
+            postings=postings,
+            tags=data.EMPTY_SET,
+            link=data.EMPTY_SET
         )
 
         return [txn]
