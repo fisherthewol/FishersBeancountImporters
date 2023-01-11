@@ -145,9 +145,7 @@ class Importer(importer.ImporterProtocol):
             self.cachedPDF = file.convert(pdf_to_text)
 
         datelines = self.cachedPDF.splitlines()
-        for line in datelines:
-            if line.startswith("Payslip Date:"):
-                dateparts = line.split(' ')[2].split('-')
-                year = self.y2kFix + dateparts[2]
-                month = tri_to_month[dateparts[1]]
-                return datetime.date(int(year), int(month), int(dateparts[0]))
+        dateparts = list(filter(lambda line: line.startswith("Payslip Date:"), datelines))[0].split(' ')[2].split('-')
+        year = self.y2kFix + dateparts[2]
+        month = tri_to_month[dateparts[1]]
+        return datetime.date(int(year), int(month), int(dateparts[0]))
