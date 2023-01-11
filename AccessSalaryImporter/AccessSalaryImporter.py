@@ -98,23 +98,28 @@ class Importer(importer.ImporterProtocol):
             # Income as seen in current account.
             data.Posting(
                 account=self.currentAccount,
-                units=Amount(D(netpay), self.currency)
+                units=Amount(D(netpay), self.currency),
+                cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
                 account=self.salaryAccount,
-                units=Amount(-D(salary), self.currency)
+                units=Amount(-D(salary), self.currency),
+                cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
                 account="Income:UK:Access:PensionMatch",
-                units=Amount(-D(pensionSingle), self.currency)
+                units=Amount(-D(pensionSingle), self.currency),
+                cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
                 account="Assets:UK:Aegon:GPPP",
-                units=Amount(D(pensionSingle) * 2, self.currency)
+                units=Amount(D(pensionSingle) * 2, self.currency),
+                cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
                 account="Expenses:UK:TY2223:NationalInsurance",
-                units=Amount(D(nationalInsurance), self.currency)
+                units=Amount(D(nationalInsurance), self.currency),
+                cost=None, price=None, flag=None, meta=None
             )
         ]
         txn = data.Transaction(
@@ -125,7 +130,7 @@ class Importer(importer.ImporterProtocol):
             narration=f"Paycheck {meta['date'].day} {meta['date'].month} {meta['date'].year}",
             postings=postings,
             tags=data.EMPTY_SET,
-            link=data.EMPTY_SET
+            links=data.EMPTY_SET
         )
 
         return [txn]
