@@ -5,9 +5,7 @@ from beancount.ingest import importer, cache
 from beancount.core import data
 from beancount.core import flags
 from beancount.core.amount import Amount
-from beancount.core.number import ZERO, D
-from beancount.ingest.importers.mixins import filing, identifier
-from beancount.utils.date_utils import parse_date_liberally
+from beancount.core.number import D
 
 
 def pdf_to_text(filename: str):
@@ -66,7 +64,7 @@ class Importer(importer.ImporterProtocol):
 
         return False
 
-    def extract(self, file, existing_entries=None):
+    def extract(self, file: cache._FileMemo, existing_entries=None):
         # Check for text of pdf
         if self.cachedPDF is None:
             self.cachedPDF = file.convert(pdf_to_text)
@@ -82,11 +80,11 @@ class Importer(importer.ImporterProtocol):
             filter(
                 lambda line: line.startswith("Basic Salary"),
                 lines))[0].split(' ')[2]
-        pensionSingle = list(
+        pension_single = list(
             filter(
                 lambda line: line.startswith("AEGON GPPP"),
                 lines))[0].split(' ')[3]
-        nationalInsurance = list(
+        national_insurance = list(
             filter(
                 lambda line: line.startswith("Employee NI"),
                 lines))[0].split(' ')[2]
@@ -108,17 +106,17 @@ class Importer(importer.ImporterProtocol):
             ),
             data.Posting(
                 account="Income:UK:Access:PensionMatch",
-                units=Amount(-D(pensionSingle), self.currency),
+                units=Amount(-D(pension_single), self.currency),
                 cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
                 account="Assets:UK:Aegon:GPPP",
-                units=Amount(D(pensionSingle) * 2, self.currency),
+                units=Amount(D(pension_single) * 2, self.currency),
                 cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
                 account="Expenses:UK:TY2223:NationalInsurance",
-                units=Amount(D(nationalInsurance), self.currency),
+                units=Amount(D(national_insurance), self.currency),
                 cost=None, price=None, flag=None, meta=None
             )
         ]
@@ -135,10 +133,10 @@ class Importer(importer.ImporterProtocol):
 
         return [txn]
 
-    def file_account(self, file):
+    def file_account(self, file: cache._FileMemo) -> str:
         return self.salaryAccount
 
-    def file_date(self, file):
+    def file_date(self, file: cache._FileMemo):
         """Date is of format DD-MON-YY"""
         # Ensure that there is cached version of the file.
         if self.cachedPDF is None:
