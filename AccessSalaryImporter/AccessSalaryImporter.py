@@ -87,7 +87,7 @@ class Importer(importer.ImporterProtocol):
         national_insurance = list(
             filter(
                 lambda line: line.startswith("Employee NI"),
-                lines))[0].split(' ')[2]
+                lines))[1].split(' ')[2]
 
         meta = data.new_metadata(file.name, 0)
         meta['date']: datetime.date = self.file_date(file)
@@ -106,7 +106,7 @@ class Importer(importer.ImporterProtocol):
             ),
             data.Posting(
                 account="Income:UK:Access:PensionMatch",
-                units=Amount(-D(pension_single), self.currency),
+                units=Amount(D(pension_single), self.currency),
                 cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
@@ -116,7 +116,7 @@ class Importer(importer.ImporterProtocol):
             ),
             data.Posting(
                 account="Assets:UK:Aegon:GPPP",
-                units=Amount(D(pension_single) * 2, self.currency),
+                units=Amount(-D(pension_single) * 2, self.currency),
                 cost=None, price=None, flag=None, meta=None
             )
         ]
