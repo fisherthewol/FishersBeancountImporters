@@ -110,13 +110,13 @@ class Importer(importer.ImporterProtocol):
                 cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
-                account="Assets:UK:Aegon:GPPP",
-                units=Amount(D(pension_single) * 2, self.currency),
+                account="Expenses:UK:TY2223:NationalInsurance",
+                units=Amount(D(national_insurance), self.currency),
                 cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
-                account="Expenses:UK:TY2223:NationalInsurance",
-                units=Amount(D(national_insurance), self.currency),
+                account="Assets:UK:Aegon:GPPP",
+                units=Amount(D(pension_single) * 2, self.currency),
                 cost=None, price=None, flag=None, meta=None
             )
         ]
