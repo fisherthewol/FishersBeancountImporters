@@ -14,6 +14,7 @@ def main():
     imp = FirstAccountImporter.Importer("")
     x = imp.identify(fc)
     print(x)
+    y = imp.extract(fc)
 
 
 if __name__ == '__main__':

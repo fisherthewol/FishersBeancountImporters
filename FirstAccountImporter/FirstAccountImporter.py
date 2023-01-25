@@ -1,4 +1,5 @@
 import csv
+import datetime
 
 from beancount.ingest import importer, cache
 from beancount.core import data
@@ -12,7 +13,6 @@ class Importer(importer.ImporterProtocol):
     def __init__(self, currentaccount: str):
         self.currentAccount = currentaccount
         self.currency = "GBP"
-        self.cachedCSV = None
         self.FLAG = flags.FLAG_WARNING
 
     def identify(self, file: cache._FileMemo) -> bool:
@@ -24,3 +24,34 @@ class Importer(importer.ImporterProtocol):
             if not header.startswith("Date,Description,Amount,Balance"):
                 return False
             return True
+
+    def extract(self, file, existing_entries=None):
+        with open(file.name, newline='') as infile:
+            rows = csv.DictReader(infile)
+
+            txns: list[data.Transaction] = []
+
+            for idx, row in enumerate(rows):
+                meta = data.new_metadata(file.name, idx + 1, kvlist={'date': self.file_date(file)})
+                posting = data.Posting(
+                    account=self.currentAccount,
+                    units=Amount(D(row['Amount']), self.currency),
+                    cost=None, price=None, flag=None, meta=None
+                )
+                d = row['Date'].split('/')[0]
+                m = row['Date'].split('/')[1]
+                y = row['Date'].split('/')[2]
+                newdate = datetime.date(int(y), int(m), int(d))
+                txn = data.Transaction(
+                    meta=meta,
+                    date=newdate,
+                    flag=self.FLAG,
+                    payee=None,
+                    narration=row['Description'],
+                    postings=[posting],
+                    tags=data.EMPTY_SET,
+                    links=data.EMPTY_SET
+                )
+                txns.append(txn)
+
+        return txns
