@@ -55,3 +55,9 @@ class Importer(importer.ImporterProtocol):
                 txns.append(txn)
 
         return txns
+
+    def file_account(self, file):
+        return self.currentAccount
+
+    def file_date(self, file):
+        return datetime.date.today()
