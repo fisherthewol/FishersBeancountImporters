@@ -40,6 +40,10 @@ class Importer(importer.ImporterProtocol):
             self,
             salaryaccount: str,
             currentaccount: str,
+            paye: str,
+            pensionMatch: str,
+            NIAccount: str,
+            pensionAccount: str,
             y2kfix: str):
         """Initialise importer.
         :parameter salaryaccount Account to book income into.
@@ -48,6 +52,10 @@ class Importer(importer.ImporterProtocol):
         """
         self.salaryAccount = salaryaccount
         self.currentAccount = currentaccount
+        self.PAYE = paye
+        self.pensionMatch = pensionMatch
+        self.NIAccount = NIAccount
+        self.PensionAccount = pensionAccount
         self.currency = "GBP"
         self.cachedPDF: str = None
         self.y2kFix = y2kfix
@@ -75,19 +83,33 @@ class Importer(importer.ImporterProtocol):
         netpay = list(
             filter(
                 lambda line: line.startswith("Net Pay"),
-                lines))[0].split(' ')[3]
+                lines
+            )
+        )[0].split(' ')[3]
         salary = list(
             filter(
                 lambda line: line.startswith("Basic Salary"),
-                lines))[0].split(' ')[2]
+                lines
+            )
+        )[0].split(' ')[2]
         pension_single = list(
             filter(
                 lambda line: line.startswith("AEGON GPPP"),
-                lines))[0].split(' ')[3]
+                lines
+            )
+        )[0].split(' ')[3]
+        paye_tax = list(
+            filter(
+                lambda line: line.startswith("PAYE"),
+                lines
+            )
+        )[0].split(' ')[1]
         national_insurance = list(
             filter(
                 lambda line: line.startswith("Employee NI"),
-                lines))[1].split(' ')[2]
+                lines
+            )
+        )[1].split(' ')[2]
 
         meta = data.new_metadata(file.name, 0)
         meta['date']: datetime.date = self.file_date(file)
@@ -105,17 +127,22 @@ class Importer(importer.ImporterProtocol):
                 cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
-                account="Income:UK:Access:PensionMatch",
+                account=self.PAYE,
+                units=Amount(D(paye_tax), self.currency),
+                cost=None, price=None, flag=None, meta=None
+            ),
+            data.Posting(
+                account=self.pensionMatch,
                 units=Amount(D(pension_single), self.currency),
                 cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
-                account="Expenses:UK:TY2223:NationalInsurance",
+                account=self.NIAccount,
                 units=Amount(D(national_insurance), self.currency),
                 cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
-                account="Assets:UK:Aegon:GPPP",
+                account=self.PensionAccount,
                 units=Amount(-D(pension_single) * 2, self.currency),
                 cost=None, price=None, flag=None, meta=None
             )
