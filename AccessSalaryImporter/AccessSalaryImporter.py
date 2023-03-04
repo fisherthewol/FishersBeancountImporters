@@ -41,21 +41,26 @@ class Importer(importer.ImporterProtocol):
             salaryaccount: str,
             currentaccount: str,
             paye: str,
-            pensionMatch: str,
-            NIAccount: str,
-            pensionAccount: str,
+            pensionmatchaccount: str,
+            nationalinsuranceaccount: str,
+            pensionassetaccount: str,
             y2kfix: str):
-        """Initialise importer.
-        :parameter salaryaccount Account to book income into.
-        :parameter currentaccount Account receiving income.
-        :parameter y2kfix First 2 digits of year for date (Payslip has y2k bug).
+        """
+        Initialise and importer for Access UK Payslips
+        :param salaryaccount: Account to book income from.
+        :param currentaccount: Account receiving your Net Pay.
+        :param paye: Account to book PAYE tax to.
+        :param pensionmatchaccount: Pension Match from Access.
+        :param nationalinsuranceaccount: NI Tax account.
+        :param pensionassetaccount: Account to contribute pension to.
+        :param y2kfix: First 2 digits of year for date (Payslip has y2k bug).
         """
         self.salaryAccount = salaryaccount
         self.currentAccount = currentaccount
         self.PAYE = paye
-        self.pensionMatch = pensionMatch
-        self.NIAccount = NIAccount
-        self.PensionAccount = pensionAccount
+        self.pensionMatch = pensionmatchaccount
+        self.NIAccount = nationalinsuranceaccount
+        self.PensionAccount = pensionassetaccount
         self.currency = "GBP"
         self.cachedPDF: str = None
         self.y2kFix = y2kfix
