@@ -7,6 +7,7 @@ from beancount.core import flags
 from beancount.core.amount import Amount
 from beancount.core.number import D
 
+
 class Importer(importer.ImporterProtocol):
     """Beancount importer for FirstDirect 1st Account CSV"""
 
@@ -29,7 +30,8 @@ class Importer(importer.ImporterProtocol):
         with open(file.name, newline='') as infile:
             rows = csv.DictReader(infile)
 
-            txns: list[data.Transaction] = []
+            txns = []
+            finalBalance = None
 
             for idx, row in enumerate(rows):
                 meta = data.new_metadata(file.name, idx + 1, kvlist={'date': self.file_date(file)})
@@ -53,7 +55,17 @@ class Importer(importer.ImporterProtocol):
                     links=data.EMPTY_SET
                 )
                 txns.append(txn)
+                if idx == 0:
+                    finalBalance = (newdate, idx + 1, row['Balance'])
 
+        balanceDirective = data.Balance(
+            meta=data.new_metadata(file.name, finalBalance[1], kvlist={'date': self.file_date(file)}),
+            date=finalBalance[0],
+            account=self.currentAccount,
+            amount=Amount(D(finalBalance[2]), self.currency),
+            diff_amount=None, tolerance=None
+        )
+        txns.append(balanceDirective)
         return txns
 
     def file_account(self, file):
