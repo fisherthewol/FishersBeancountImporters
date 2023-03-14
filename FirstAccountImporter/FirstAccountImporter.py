@@ -1,3 +1,4 @@
+import collections
 import csv
 import datetime
 
@@ -30,7 +31,7 @@ class Importer(importer.ImporterProtocol):
         with open(file.name, newline='') as infile:
             rows = csv.DictReader(infile)
 
-            txns = []
+            txns = collections.deque()
             finalBalance = None
 
             for idx, row in enumerate(rows):
@@ -54,19 +55,22 @@ class Importer(importer.ImporterProtocol):
                     tags=data.EMPTY_SET,
                     links=data.EMPTY_SET
                 )
-                txns.append(txn)
+                # Most Recent item is first in CSV, and we want it to be last; add to left.
+                txns.appendleft(txn)
                 if idx == 0:
                     finalBalance = (newdate, idx + 1, row['Balance'])
 
-        balanceDirective = data.Balance(
-            meta=data.new_metadata(file.name, finalBalance[1], kvlist={'date': self.file_date(file)}),
-            date=finalBalance[0],
-            account=self.currentAccount,
-            amount=Amount(D(finalBalance[2]), self.currency),
-            diff_amount=None, tolerance=None
-        )
-        txns.append(balanceDirective)
-        return txns
+        if finalBalance is not None:
+            balanceDirective = data.Balance(
+                meta=data.new_metadata(file.name, finalBalance[1], kvlist={'date': self.file_date(file)}),
+                date=finalBalance[0],
+                account=self.currentAccount,
+                amount=Amount(D(finalBalance[2]), self.currency),
+                diff_amount=None, tolerance=None
+            )
+            txns.append(balanceDirective)
+
+        return list(txns)
 
     def file_account(self, file):
         return self.currentAccount
