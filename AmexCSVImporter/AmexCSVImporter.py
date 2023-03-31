@@ -58,7 +58,7 @@ class Importer(importer.ImporterProtocol):
                 date=newdate,
                 flag=self.FLAG,
                 payee=None,
-                description=row['Description'],
+                narration=row['Description'],
                 postings=[posting],
                 tags=data.EMPTY_SET,
                 links=data.EMPTY_SET

@@ -1,1 +1,1 @@
-from AmexCSVImporter.AmexCSVImporter import importer
+from AmexCSVImporter.AmexCSVImporter import Importer
