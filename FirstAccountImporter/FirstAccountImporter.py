@@ -43,7 +43,7 @@ class Importer(importer.ImporterProtocol):
         finalBalance = None
 
         for idx, row in enumerate(rows):
-            meta = data.new_metadata(file.name, idx + 1, kvlist={'date': self.file_date(file)})
+            meta = data.new_metadata(file.name, idx + 1)
             posting = data.Posting(
                 account=self.currentAccount,
                 units=Amount(D(row['Amount']), self.currency),
