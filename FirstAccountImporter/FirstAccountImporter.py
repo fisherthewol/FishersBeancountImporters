@@ -35,37 +35,38 @@ class Importer(importer.ImporterProtocol):
         return False
 
     def extract(self, file, existing_entries=None):
-        with open(file.name, newline='') as infile:
-            rows = csv.DictReader(infile)
+        if self.cachedRows is None:
+            self.cachedRows = file.convert(csv_to_list)
 
-            txns = collections.deque()
-            finalBalance = None
+        rows = csv.DictReader(self.cachedRows)
+        txns = collections.deque()
+        finalBalance = None
 
-            for idx, row in enumerate(rows):
-                meta = data.new_metadata(file.name, idx + 1, kvlist={'date': self.file_date(file)})
-                posting = data.Posting(
-                    account=self.currentAccount,
-                    units=Amount(D(row['Amount']), self.currency),
-                    cost=None, price=None, flag=None, meta=None
-                )
-                d = row['Date'].split('/')[0]
-                m = row['Date'].split('/')[1]
-                y = row['Date'].split('/')[2]
-                newdate = datetime.date(int(y), int(m), int(d))
-                txn = data.Transaction(
-                    meta=meta,
-                    date=newdate,
-                    flag=self.FLAG,
-                    payee=None,
-                    narration=row['Description'],
-                    postings=[posting],
-                    tags=data.EMPTY_SET,
-                    links=data.EMPTY_SET
-                )
-                # Most Recent item is first in CSV, and we want it to be last; add to left.
-                txns.appendleft(txn)
-                if idx == 0:
-                    finalBalance = (newdate, idx + 1, row['Balance'])
+        for idx, row in enumerate(rows):
+            meta = data.new_metadata(file.name, idx + 1, kvlist={'date': self.file_date(file)})
+            posting = data.Posting(
+                account=self.currentAccount,
+                units=Amount(D(row['Amount']), self.currency),
+                cost=None, price=None, flag=None, meta=None
+            )
+            d = row['Date'].split('/')[0]
+            m = row['Date'].split('/')[1]
+            y = row['Date'].split('/')[2]
+            newdate = datetime.date(int(y), int(m), int(d))
+            txn = data.Transaction(
+                meta=meta,
+                date=newdate,
+                flag=self.FLAG,
+                payee=None,
+                narration=row['Description'],
+                postings=[posting],
+                tags=data.EMPTY_SET,
+                links=data.EMPTY_SET
+            )
+            # Most Recent item is first in CSV, and we want it to be last; add to left.
+            txns.appendleft(txn)
+            if idx == 0:
+                finalBalance = (newdate, idx + 1, row['Balance'])
 
         if finalBalance is not None:
             balanceDirective = data.Balance(
