@@ -1,5 +1,6 @@
 import collections
 import csv
+import datetime
 
 from beancount.core import flags, data
 from beancount.core.amount import Amount
@@ -38,13 +39,36 @@ class Importer(importer.ImporterProtocol):
             self.cachedRows = file.convert(csv_to_list)
 
         rows = csv.DictReader(self.cachedRows)
-        txns = collections.deque()
+        txns = []
 
         for idx, row in enumerate(rows):
-            meta = data.new_metadata(file.name, idx + 1, kvlist={'date': self.file_date(file)})
+            meta = data.new_metadata(file.name, idx + 1, kvlist={'reference': row['Reference']})
             posting = data.Posting(
                 account=self.creditCardAccount,
                 units=Amount(-D(row['Amount']), self.currency),
                 cost=None, price=None, flag=None, meta=None
             )
-            d = row['Date'].split('/')
+            splitdate = row['Date'].split('/')
+            d = splitdate[0]
+            m = splitdate[1]
+            y = splitdate[2]
+            newdate = datetime.date(int(y), int(m), int(d))
+            txn = data.Transaction(
+                meta=meta,
+                date=newdate,
+                flag=self.FLAG,
+                payee=None,
+                description=row['Description'],
+                postings=[posting],
+                tags=data.EMPTY_SET,
+                links=data.EMPTY_SET
+            )
+            txns.append(txn)
+
+        return txns
+
+    def file_account(self, file):
+        return self.creditCardAccount
+
+    def file_date(self, file):
+        return datetime.date.today()
