@@ -49,9 +49,10 @@ class Importer(importer.ImporterProtocol):
                 units=Amount(D(row['Amount']), self.currency),
                 cost=None, price=None, flag=None, meta=None
             )
-            d = row['Date'].split('/')[0]
-            m = row['Date'].split('/')[1]
-            y = row['Date'].split('/')[2]
+            splitdate = row['date'].split('/')
+            d = splitdate[0]
+            m = splitdate[1]
+            y = splitdate[2]
             newdate = datetime.date(int(y), int(m), int(d))
             txn = data.Transaction(
                 meta=meta,
