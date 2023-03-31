@@ -25,7 +25,8 @@ class Importer(importer.ImporterProtocol):
             header = infile.readline()
             if not header.startswith("Date,Description,Amount,Balance"):
                 return False
-            return True
+
+        return True
 
     def extract(self, file, existing_entries=None):
         with open(file.name, newline='') as infile:
