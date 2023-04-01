@@ -49,7 +49,7 @@ class Importer(importer.ImporterProtocol):
                 units=Amount(D(row['Amount']), self.currency),
                 cost=None, price=None, flag=None, meta=None
             )
-            splitdate = row['date'].split('/')
+            splitdate = row['Date'].split('/')
             d = splitdate[0]
             m = splitdate[1]
             y = splitdate[2]
