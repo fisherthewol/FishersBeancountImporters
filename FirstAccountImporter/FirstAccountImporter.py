@@ -10,6 +10,8 @@ from beancount.core import flags
 from beancount.core.amount import Amount
 from beancount.core.number import D
 
+from Heuristics.Heuristics import Heuristics
+
 
 def csv_to_list(filename: str):
     with open(filename, 'r') as infile:
@@ -23,10 +25,10 @@ class Importer(importer.ImporterProtocol):
     def __init__(self, currentaccount: str, groceriesaccount: str, flag: str = ''):
         self.currentAccount = currentaccount
         self.groceriesAccount = groceriesaccount
-        self.groceryStores = ['tesco', 'morrison', 'lidl', 'aldi']
         self.currency = "GBP"
         self.FLAG = flags.FLAG_WARNING if flag is '' else flags.FLAG_OKAY
         self.cachedRows: [str] = None
+        self.heuristics = Heuristics()
 
     def identify(self, file: cache._FileMemo) -> bool:
         if file.mimetype() != 'text/csv':
@@ -52,7 +54,7 @@ class Importer(importer.ImporterProtocol):
                 account=self.currentAccount,
                 units=Amount(D(row['Amount']), self.currency),
                 cost=None, price=None, flag=None, meta=None
-            ), self.identify_groceries(row)]
+            ), self.heuristics.identify_groceries(row, self.groceriesAccount)]
             splitdate = row['Date'].split('/')
             d = splitdate[0]
             m = splitdate[1]
@@ -91,13 +93,4 @@ class Importer(importer.ImporterProtocol):
     def file_date(self, file):
         return datetime.date.today()
 
-    def identify_groceries(self, row: Dict[str]) -> Posting:
-        desc: str = row['Description']
-        for store in self.groceryStores:
-            if store in desc.lower():
-                return data.Posting(
-                    account=self.groceriesAccount,
-                    units=Amount(-D(row['Amount']), self.currency),
-                    cost=None, price=None, flag=None, meta=None
-                )
-        return None
+
