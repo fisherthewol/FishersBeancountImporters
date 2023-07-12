@@ -1,7 +1,9 @@
 import collections
 import csv
 import datetime
+from typing import Dict
 
+from beancount.core.data import Posting
 from beancount.ingest import importer, cache
 from beancount.core import data
 from beancount.core import flags
@@ -18,10 +20,12 @@ def csv_to_list(filename: str):
 class Importer(importer.ImporterProtocol):
     """Beancount importer for FirstDirect 1st Account CSV"""
 
-    def __init__(self, currentaccount: str):
+    def __init__(self, currentaccount: str, groceriesaccount: str, flag: str = ''):
         self.currentAccount = currentaccount
+        self.groceriesAccount = groceriesaccount
+        self.groceryStores = ['tesco', 'morrison', 'lidl', 'aldi']
         self.currency = "GBP"
-        self.FLAG = flags.FLAG_WARNING
+        self.FLAG = flags.FLAG_WARNING if flag is '' else flags.FLAG_OKAY
         self.cachedRows: [str] = None
 
     def identify(self, file: cache._FileMemo) -> bool:
@@ -44,11 +48,11 @@ class Importer(importer.ImporterProtocol):
 
         for idx, row in enumerate(rows):
             meta = data.new_metadata(file.name, idx + 1)
-            posting = data.Posting(
+            postings = [data.Posting(
                 account=self.currentAccount,
                 units=Amount(D(row['Amount']), self.currency),
                 cost=None, price=None, flag=None, meta=None
-            )
+            ), self.identify_groceries(row)]
             splitdate = row['Date'].split('/')
             d = splitdate[0]
             m = splitdate[1]
@@ -60,7 +64,7 @@ class Importer(importer.ImporterProtocol):
                 flag=self.FLAG,
                 payee=None,
                 narration=row['Description'],
-                postings=[posting],
+                postings=postings,
                 tags=data.EMPTY_SET,
                 links=data.EMPTY_SET
             )
@@ -86,3 +90,14 @@ class Importer(importer.ImporterProtocol):
 
     def file_date(self, file):
         return datetime.date.today()
+
+    def identify_groceries(self, row: Dict[str]) -> Posting:
+        desc: str = row['Description']
+        for store in self.groceryStores:
+            if store in desc.lower():
+                return data.Posting(
+                    account=self.groceriesAccount,
+                    units=Amount(-D(row['Amount']), self.currency),
+                    cost=None, price=None, flag=None, meta=None
+                )
+        return None
