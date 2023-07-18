@@ -27,3 +27,16 @@ class Heuristics:
                     cost=None, price=None, flag=flags.FLAG_WARNING, meta=None
                 )
         return None
+
+    def identify_phone(self, row: Dict[str], phoneaccount: str) -> Posting:
+        desc: str = row[self.payeeColumn]
+        if 'smarty' in desc.lower():
+            return Posting(
+                account=phoneaccount,
+                units=Amount(
+                    -D(row[self.valueColumn]) if self.invertValue else D(row[self.valueColumn]),
+                    self.currency
+                ),
+                cost=None, price=None, flag=flags.FLAG_WARNING, meta=None
+            )
+        return None
