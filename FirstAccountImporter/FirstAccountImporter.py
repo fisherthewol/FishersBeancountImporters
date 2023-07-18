@@ -3,7 +3,6 @@ import csv
 import datetime
 from typing import Dict
 
-from beancount.core.data import Posting
 from beancount.ingest import importer, cache
 from beancount.core import data
 from beancount.core import flags
