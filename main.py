@@ -11,10 +11,11 @@ def main():
     import FirstAccountImporter
     from beancount.ingest import cache
     fc = cache.get_file(os.getcwd() + "/FirstAccountImporter/25012023_1621.csv")
-    imp = FirstAccountImporter.Importer("")
+    imp = FirstAccountImporter.Importer(currentaccount="current", groceriesaccount="groceries", phoneaccount="phoneac", flag="*")
     x = imp.identify(fc)
     print(x)
     y = imp.extract(fc)
+    input("Continue")
 
 
 if __name__ == '__main__':

@@ -44,7 +44,8 @@ class Importer(importer.ImporterProtocol):
             pensionmatchaccount: str,
             nationalinsuranceaccount: str,
             pensionassetaccount: str,
-            y2kfix: str):
+            y2kfix: str,
+            flag: str = ''):
         """
         Initialise and importer for Access UK Payslips
         :param salaryaccount: Account to book income from.
@@ -64,7 +65,7 @@ class Importer(importer.ImporterProtocol):
         self.currency = "GBP"
         self.cachedPDF: str = None
         self.y2kFix = y2kfix
-        self.FLAG = flags.FLAG_WARNING
+        self.FLAG = flags.FLAG_WARNING if flag == '' else flags.FLAG_OKAY
 
     def identify(self, file: cache._FileMemo) -> bool:
         """Check that is a PDF containing the text "Pay" and "ACCESS UK" """

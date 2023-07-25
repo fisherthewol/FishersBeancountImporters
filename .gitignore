@@ -1,0 +1,5 @@
+*.csv
+*.pdf
+*.egg-info/
+build/
+.idea/
