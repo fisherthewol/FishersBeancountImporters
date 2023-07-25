@@ -1,4 +1,4 @@
-from typing import Dict, List, Callable
+from typing import Dict, List
 
 from beancount.core import flags
 from beancount.core.amount import Amount
