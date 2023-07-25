@@ -27,6 +27,12 @@ class CSVHeuristics:
         self.invertValue = invertvalue
         self.groceryStores = grocerystores if grocerystores else ['tesco', 'morrison', 'lidl', 'aldi']
 
+    def identify(self, row: Dict[str, str], groceriesaccount: str, phoneaccount: str) -> Posting:
+        if (identified := self.identify_groceries(row, groceriesaccount)) is not None:
+            return identified
+        if (identified := self.identify_phone(row, phoneaccount)) is not None:
+            return identified
+
     def identify_groceries(self, row: Dict[str, str], groceriesaccount: str) -> Posting:
         desc: str = row[self.payeeColumn]
         for store in self.groceryStores:
