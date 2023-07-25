@@ -2,3 +2,4 @@
 *.pdf
 *.egg-info/
 build/
+.idea/
