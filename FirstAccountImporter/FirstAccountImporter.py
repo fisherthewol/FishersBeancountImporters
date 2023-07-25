@@ -25,7 +25,7 @@ class Importer(importer.ImporterProtocol):
         self.currentAccount = currentaccount
         self.groceriesAccount = groceriesaccount
         self.currency = "GBP"
-        self.FLAG = flags.FLAG_WARNING if flag is '' else flags.FLAG_OKAY
+        self.FLAG = flags.FLAG_WARNING if flag == '' else flags.FLAG_OKAY
         self.cachedRows: [str] = None
         self.heuristics = Heuristics()
 
