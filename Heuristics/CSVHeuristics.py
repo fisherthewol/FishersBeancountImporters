@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from beancount.core import flags
 from beancount.core.amount import Amount
@@ -7,7 +7,12 @@ from beancount.core.number import D
 
 
 class CSVHeuristics:
-    def __init__(self, payeecolumn: str, valuecolumn: str, currency: str, invertvalue: bool = True):
+    def __init__(self,
+                 payeecolumn: str,
+                 valuecolumn: str,
+                 currency: str = "GBP",
+                 invertvalue: bool = True,
+                 grocerystores: List = None):
         """
         Create a class to perform heuristics.
         :param payeecolumn: Column to read Payee from.
@@ -16,11 +21,11 @@ class CSVHeuristics:
         :param invertvalue: Whether the posting should have an inverted value.
                             Set this to the inverse of the units in the calling class.
         """
-        self.groceryStores = ['tesco', 'morrison', 'lidl', 'aldi']
         self.payeeColumn = payeecolumn
         self.valueColumn = valuecolumn
         self.currency = currency
         self.invertValue = invertvalue
+        self.groceryStores = grocerystores if grocerystores else ['tesco', 'morrison', 'lidl', 'aldi']
 
     def identify_groceries(self, row: Dict[str, str], groceriesaccount: str) -> Posting:
         desc: str = row[self.payeeColumn]
