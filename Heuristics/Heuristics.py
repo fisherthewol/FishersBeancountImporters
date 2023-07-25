@@ -14,7 +14,7 @@ class Heuristics:
         self.currency = currency
         self.invertValue = invertvalue
 
-    def identify_groceries(self, row: Dict[str], groceriesaccount: str) -> Posting:
+    def identify_groceries(self, row: Dict[str, str], groceriesaccount: str) -> Posting:
         desc: str = row[self.payeeColumn]
         for store in self.groceryStores:
             if store in desc.lower():
@@ -28,7 +28,7 @@ class Heuristics:
                 )
         return None
 
-    def identify_phone(self, row: Dict[str], phoneaccount: str) -> Posting:
+    def identify_phone(self, row: Dict[str, str], phoneaccount: str) -> Posting:
         desc: str = row[self.payeeColumn]
         if 'smarty' in desc.lower():
             return Posting(
