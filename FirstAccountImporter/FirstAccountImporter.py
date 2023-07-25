@@ -9,7 +9,7 @@ from beancount.core import flags
 from beancount.core.amount import Amount
 from beancount.core.number import D
 
-from Heuristics.Heuristics import Heuristics
+from Heuristics.CSVHeuristics import CSVHeuristics
 
 
 def csv_to_list(filename: str):
@@ -27,7 +27,11 @@ class Importer(importer.ImporterProtocol):
         self.currency = "GBP"
         self.FLAG = flags.FLAG_WARNING if flag == '' else flags.FLAG_OKAY
         self.cachedRows: [str] = None
-        self.heuristics = Heuristics()
+        self.heuristics = CSVHeuristics(
+            payeecolumn='Description',
+            valuecolumn='Amount',
+            currency=self.currency,
+            invertvalue=True)
 
     def identify(self, file: cache._FileMemo) -> bool:
         if file.mimetype() != 'text/csv':

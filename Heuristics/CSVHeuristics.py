@@ -6,8 +6,16 @@ from beancount.core.data import Posting
 from beancount.core.number import D
 
 
-class Heuristics:
+class CSVHeuristics:
     def __init__(self, payeecolumn: str, valuecolumn: str, currency: str, invertvalue: bool = True):
+        """
+        Create a class to perform heuristics.
+        :param payeecolumn: Column to read Payee from.
+        :param valuecolumn: Column to read Value from.
+        :param currency: Currency to use.
+        :param invertvalue: Whether the posting should have an inverted value.
+                            Set this to the inverse of the units in the calling class.
+        """
         self.groceryStores = ['tesco', 'morrison', 'lidl', 'aldi']
         self.payeeColumn = payeecolumn
         self.valueColumn = valuecolumn

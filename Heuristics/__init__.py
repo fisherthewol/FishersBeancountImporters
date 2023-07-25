@@ -1,1 +1,1 @@
-from Heuristics import Heuristics
+from Heuristics import CSVHeuristics
