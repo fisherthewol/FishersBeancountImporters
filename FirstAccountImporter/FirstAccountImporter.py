@@ -1,7 +1,6 @@
 import collections
 import csv
 import datetime
-from typing import Dict
 
 from beancount.ingest import importer, cache
 from beancount.core import data
