@@ -1,3 +1,5 @@
+from typing import Union
+
 from beancount.core import flags
 from beancount.core.amount import Amount
 from beancount.core.data import Posting
@@ -6,8 +8,8 @@ from beancount.core.number import D
 
 class CSVHeuristics:
     def __init__(self,
-                 payeecolumn: str,
-                 valuecolumn: str,
+                 payeecolumn: str | int,
+                 valuecolumn: str | int,
                  groceriesaccount: str,
                  phoneaccount: str,
                  currency: str = "GBP",
@@ -31,7 +33,7 @@ class CSVHeuristics:
         self.invertValue = invertvalue
         self.groceryStores = grocerystores if grocerystores else ['tesco', 'morrison', 'lidl', 'aldi']
 
-    def identify(self, row: dict[str, str]) -> Posting:
+    def identify(self, row: Union[dict[str, str], list[str]]) -> Posting:
         functions = [getattr(self, func) for func in dir(self) if
                      func.startswith("identify_")
                      and callable(getattr(self, func))]
@@ -39,7 +41,7 @@ class CSVHeuristics:
             if (identified := function(row)) is not None:
                 return identified
 
-    def identify_groceries(self, row: dict[str, str]) -> Posting:
+    def identify_groceries(self, row: Union[dict[str, str], list[str]]) -> Posting:
         desc: str = row[self.payeeColumn]
         for store in self.groceryStores:
             if store in desc.lower():
@@ -53,7 +55,7 @@ class CSVHeuristics:
                 )
         return None
 
-    def identify_phone(self, row: dict[str, str]) -> Posting:
+    def identify_phone(self, row: Union[dict[str, str], list[str]]) -> Posting:
         desc: str = row[self.payeeColumn]
         if 'smarty' in desc.lower():
             return Posting(
