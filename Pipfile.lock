@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "959e307c98ec044dadec5ac936b8d90d2993527778337b177e123d2de5500be0"
+            "sha256": "d530b17da9f84798dfb67d4f22c0c57ef5bccbec08f5f84eadc635fc566f2c2c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -25,9 +25,47 @@
             "version": "==2.13.1"
         },
         "beancount": {
-            "git": "git+https://github.com/beancount/beancount.git",
+            "hashes": [
+                "sha256:0246569208883042d14f35112af31b1ca4ac1477db2050e3e0dd0f718887cab1",
+                "sha256:1273e97b2a642917f4dad078fd42e23fcfbb6ffc89e987f07f664103305e9df6",
+                "sha256:147beb06cb52b6cd12fa5dd2595b8d6a3f5b7212ad634256ac7dd4b84441a285",
+                "sha256:1ed8815576f1525b362601d3bd6f526d8fb8d34f83afe0ac34e7ddc6132f9df6",
+                "sha256:1f39cbb0ca36b2e764badabfbf88ff53a07dd2b60895bda621ea35facf29303d",
+                "sha256:204db0ea166e124fd17ead37f1dab20b9eee048c01c24b9dc0bb1c342e70b9e1",
+                "sha256:32717b9e95f41cbd41feb5d132d330bff767015c01199be833a409c6f503f4ce",
+                "sha256:374ec294a07b8381aa34067749b145591f323da09e0f6c35685d573b23422aa6",
+                "sha256:3ab028f40727a6348d1bb282de05e02ddef76ede5d83a67e15033371c8edaec0",
+                "sha256:3b8889e287674938c6ff953f77affc8e550c636e630f6b26157634fdb98ac412",
+                "sha256:42b7ac1c1656232f7bc179723f626a63e91337928cc03335fddcc9de36055f77",
+                "sha256:4bb50339e987ef2cca6da0dec3156a1555a8b6ace3c4ad25b834c634b88d86fa",
+                "sha256:50ef6c0f3035f44b8fc1b70b8999c12ea6ea7825e2a67c66660456aac3ed2f37",
+                "sha256:801f93bed6b57d2e22436688c489d5a1bf1f76e210f3ced18680757e60d3475a",
+                "sha256:81ef8abef1a7fb7914e5e96baf927f9ef00841d3cd3b9e7f6ef5351d9a30c58b",
+                "sha256:83108e60f697cd2b67d3b21731cf803d85a2419a54307a2ec8f20fbddb41e7c6",
+                "sha256:8d457a9a8495d456a8c36754769ed26f45726c736c01beec69963929e7423e8f",
+                "sha256:8dc71b4b529be4034e26c16541c70a64cb43c20720776db3ff995403466108f3",
+                "sha256:8ed8540d44476272b76ecc221af0d83e913d578430cbd9a1c67b981d93513962",
+                "sha256:8f8300a45e0ecf2230f3f10c584bed41422db261b9421714173e2c31ece16695",
+                "sha256:974c687e604a1fc164dfaf73cf5e5a3001a649da95cadd34de11d8324a150c40",
+                "sha256:989af650715fee84e0966d1b7109d2d774d2227686434bb19c1653dfbcd9b076",
+                "sha256:bca45b3baf889789786c6daca8b2cb0cdd4a9de2451076d7750f4321cb121798",
+                "sha256:bf6eeacf27bb7681c28e868e4f3c99f5b738d3376519d2aab9200063d14167a7",
+                "sha256:c99ddec92145bfb029066395ed9815833b60f5a627feb1051a19912d3c8a26d2",
+                "sha256:cd5fcd9f3dcc5ebf8dd1c092367c24d7e12b78778492285b24902aeb92b396f6",
+                "sha256:d23ecda2893cf295e17705ae65d04add422dffe3979cb891395fedfa1eb573d8",
+                "sha256:d82809301de412e4a41bb9fc741ff4f1da8ac65d7f31a9948d89ccc162f0598f",
+                "sha256:d883d0028e1a8d9c7c830e8f527a50229c217a417fcd3e9fb01cdb8a43c62038",
+                "sha256:dac48134124089f0c0c75840e69d522fb14e2a8e8e4b4950ec4d29fc55e9d48f",
+                "sha256:dc54ec7d0fabdb62c737e9e1e7b1c9701dfd95a444b604b74632253d06f01c29",
+                "sha256:dd2d512f929ee89faae60e0cb777afd013fceff35873bf58f946af0b9777b9f5",
+                "sha256:e438209f95c3bc6f277251952bf0f4cdbfd2426faed5f18962c20ad9b89fdf72",
+                "sha256:eb4c916b42b5c15f2da6b6c84dd2a137221f47d84269ea12c635dbeade929e50",
+                "sha256:f60a84cc9c730b1e8f3f7f32b5b4e21b9324256ead054f053dc480ee3da7d520",
+                "sha256:fc494a82962842215dede97b32b4e1c169d19ea075be6525d05c51cdbf984ebf"
+            ],
+            "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "ref": "1163f18bdb9b0fcfccc9fb969e2cc436bc4ba914"
+            "version": "==2.3.6"
         },
         "beautifulsoup4": {
             "hashes": [
