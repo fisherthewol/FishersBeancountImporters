@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-beancount = {ref = "v2", git = "https://github.com/beancount/beancount.git"}
-fava = "*"
+beancount = "2.3.6"
+fava = "1.27.3"
 pypdf = ">=3.17.0"
 werkzeug = ">=2.3.8"
 
