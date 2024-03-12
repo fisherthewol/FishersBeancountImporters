@@ -6,7 +6,7 @@ setup(
     author="fisherthewol",
     packages=find_packages(['AccessSalaryImporter']),
     install_requires=[
-        'PyPDF2>=3.0.1',
-        'beancount @ git+https://github.com/beancount/beancount.git@6d64d56b2e04dd164cd117c124d703da89783ee1',
+        'pypdf>=3.17.0',
+        'beancount==2.3.6',
     ]
 )
