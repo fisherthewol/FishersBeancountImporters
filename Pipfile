@@ -7,7 +7,7 @@ name = "pypi"
 beancount = "2.3.6"
 fava = "1.27.3"
 pypdf = ">=3.17.0"
-werkzeug = ">=2.3.8"
+werkzeug = ">=3.0.3"
 setuptools = "*"
 
 [dev-packages]
