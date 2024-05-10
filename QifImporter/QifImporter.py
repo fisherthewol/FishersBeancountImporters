@@ -4,7 +4,7 @@ from beancount.core import flags, data
 from beancount.core.amount import Amount
 from beancount.core.number import D
 from beancount.ingest import importer, cache
-from quiffen import Qif, AccountType, Transaction
+from quiffen import Qif, AccountType, Transaction, ParserException
 
 
 class QifImporter(importer.ImporterProtocol):
@@ -15,6 +15,7 @@ class QifImporter(importer.ImporterProtocol):
                  dayfirst: bool,
                  qifaccount: str = '',
                  currency: str = 'GBP'):
+        self.qifObject = None
         self.destinationAccount = destinationaccount
         self.dayFirst = dayfirst
         self.qifAccount = qifaccount
@@ -25,23 +26,29 @@ class QifImporter(importer.ImporterProtocol):
         return f"QifImporter.{self.destinationAccount}"
 
     def identify(self, file: cache._FileMemo):
-        if file.mimetype() != 'application/x-qw':
+        if not file.name.endswith('.qif'):
             return False
 
-        # TODO: Add code for caching.
+        try:
+            self.qifObject = Qif.parse(file.name, day_first=self.dayFirst)
+        except ParserException:
+            return False
+
         return True
 
     def extract(self, file, existing_entries=None):
-        parsedQif = Qif.parse(file.name, day_first=self.dayFirst)
-        if len(parsedQif.accounts) != 1:
+        if self.qifObject is None:
+            self.qifObject = Qif.parse(file.name, day_first=self.dayFirst)
+
+        if len(self.qifObject.accounts) != 1:
             try:
-                account = parsedQif.accounts[self.qifAccount]
+                account = self.qifObject.accounts[self.qifAccount]
             except KeyError:
                 print(f'Number of accounts > 1 and specified account ({self.qifAccount}) not found.')
                 return []
         else:
             try:
-                account = parsedQif.accounts[self.qifAccount] if self.qifAccount else parsedQif.accounts[
+                account = self.qifObject.accounts[self.qifAccount] if self.qifAccount else self.qifObject.accounts[
                     'Quiffen Default Account']
             except KeyError:
                 print(f'Number of accounts = 1 and specified account ({self.qifAccount}) or default account not found.')

@@ -9,7 +9,7 @@ fava = "1.27.3"
 pypdf = ">=3.17.0"
 werkzeug = ">=3.0.3"
 setuptools = "*"
-quiffen = "*"
+quiffen = "2.0.10"
 
 [dev-packages]
 
