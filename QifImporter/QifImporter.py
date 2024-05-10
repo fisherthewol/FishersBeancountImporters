@@ -94,7 +94,8 @@ class QifImporter(importer.ImporterProtocol):
     def file_date(self, file: cache._FileMemo):
         return datetime.date.today()
 
-    def GetNarration(self, transaction: Transaction):
+    @staticmethod
+    def GetNarration(transaction: Transaction):
         narrations = []
         if transaction.memo:
             narrations.append(f'Memo: {transaction.memo}')
