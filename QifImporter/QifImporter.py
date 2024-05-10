@@ -4,7 +4,7 @@ from beancount.core import flags, data
 from beancount.core.amount import Amount
 from beancount.core.number import D
 from beancount.ingest import importer, cache
-from quiffen import Qif, AccountType
+from quiffen import Qif, AccountType, Transaction
 
 
 class QifImporter(importer.ImporterProtocol):
@@ -87,6 +87,18 @@ class QifImporter(importer.ImporterProtocol):
     def file_date(self, file: cache._FileMemo):
         return datetime.date.today()
 
-    def GetNarration(self, transaction):
-        # TODO: Implement this based on other quiffen attributes.
-        return ''
+    def GetNarration(self, transaction: Transaction):
+        narrations = []
+        if transaction.memo:
+            narrations.append(f'Memo: {transaction.memo}')
+        if transaction.cleared:
+            narrations.append(f'Cleared: {transaction.cleared}')
+        if transaction.category:
+            narrations.append(f'Category: {transaction.category}')
+        if transaction.check_number:
+            narrations.append(f'Check Number: {transaction.check_number}')
+
+        if len(narrations) == 0:
+            return None
+
+        return ', '.join(narrations)
