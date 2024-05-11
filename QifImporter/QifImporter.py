@@ -54,8 +54,12 @@ class QifImporter(importer.ImporterProtocol):
                 print(f'Number of accounts = 1 and specified account ({self.qifAccount}) or default account not found.')
                 return []
 
-        transactions = account.transactions[account.account_type]
-        match account.account_type:
+        if len(account.transactions) != 1:
+            print('More than one "transaction" in account.transactions, aborting.')
+            return []
+        (accounttype, transactionlist), = account.transactions.items()
+
+        match accounttype:
             case AccountType.CASH | AccountType.BANK:
                 invertSign = False
             case AccountType.CREDIT_CARD:
@@ -65,7 +69,7 @@ class QifImporter(importer.ImporterProtocol):
                 return []
 
         txns = []
-        for transaction in transactions:
+        for transaction in transactionlist:
             meta = data.new_metadata(filename=file.name, lineno=transaction.line_number)
             amount = Amount(-D(transaction.amount), currency=self.currency) if invertSign else Amount(
                 D(transaction.amount), currency=self.currency)
