@@ -47,14 +47,9 @@ class QifImporter(importer.ImporterProtocol):
             return []
         (accounttype, transactionlist), = account.transactions.items()
 
-        match accounttype:
-            case AccountType.CASH | AccountType.BANK:
-                invertSign = False
-            case AccountType.CREDIT_CARD:
-                invertSign = True
-            case _:
-                print(f'Unknown account type: {account.account_type}')
-                return []
+        invertSign = self.GetInvertSign(accounttype)
+        if invertSign is None:
+            return []
 
         txns = []
         for transaction in transactionlist:
@@ -86,6 +81,21 @@ class QifImporter(importer.ImporterProtocol):
     def file_date(self, file: cache._FileMemo):
         return datetime.date.today()
 
+    def GetQifAccount(self):
+        if len(self.qifObject.accounts) != 1:
+            try:
+                return self.qifObject.accounts[self.qifAccount]
+            except KeyError:
+                print(f'Number of accounts > 1 and specified account ({self.qifAccount}) not found.')
+                return []
+        else:
+            try:
+                return self.qifObject.accounts[self.qifAccount] if self.qifAccount else self.qifObject.accounts[
+                    'Quiffen Default Account']
+            except KeyError:
+                print(f'Number of accounts = 1 and specified account ({self.qifAccount}) or default account not found.')
+                return []
+
     @staticmethod
     def GetNarration(transaction: Transaction):
         narrations = []
@@ -103,17 +113,13 @@ class QifImporter(importer.ImporterProtocol):
 
         return ', '.join(narrations)
 
-    def GetQifAccount(self):
-        if len(self.qifObject.accounts) != 1:
-            try:
-                return self.qifObject.accounts[self.qifAccount]
-            except KeyError:
-                print(f'Number of accounts > 1 and specified account ({self.qifAccount}) not found.')
-                return []
-        else:
-            try:
-                return self.qifObject.accounts[self.qifAccount] if self.qifAccount else self.qifObject.accounts[
-                    'Quiffen Default Account']
-            except KeyError:
-                print(f'Number of accounts = 1 and specified account ({self.qifAccount}) or default account not found.')
-                return []
+    @staticmethod
+    def GetInvertSign(accounttype):
+        match accounttype:
+            case AccountType.CASH | AccountType.BANK:
+                return False
+            case AccountType.CREDIT_CARD:
+                return True
+            case _:
+                print(f'Unknown account type: {accounttype}')
+                return None
