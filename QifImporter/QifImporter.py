@@ -40,19 +40,7 @@ class QifImporter(importer.ImporterProtocol):
         if self.qifObject is None:
             self.qifObject = Qif.parse(file.name, day_first=self.dayFirst)
 
-        if len(self.qifObject.accounts) != 1:
-            try:
-                account = self.qifObject.accounts[self.qifAccount]
-            except KeyError:
-                print(f'Number of accounts > 1 and specified account ({self.qifAccount}) not found.')
-                return []
-        else:
-            try:
-                account = self.qifObject.accounts[self.qifAccount] if self.qifAccount else self.qifObject.accounts[
-                    'Quiffen Default Account']
-            except KeyError:
-                print(f'Number of accounts = 1 and specified account ({self.qifAccount}) or default account not found.')
-                return []
+        account = self.GetQifAccount()
 
         if len(account.transactions) != 1:
             print('More than one "transaction" in account.transactions, aborting.')
@@ -114,3 +102,18 @@ class QifImporter(importer.ImporterProtocol):
             return None
 
         return ', '.join(narrations)
+
+    def GetQifAccount(self):
+        if len(self.qifObject.accounts) != 1:
+            try:
+                return self.qifObject.accounts[self.qifAccount]
+            except KeyError:
+                print(f'Number of accounts > 1 and specified account ({self.qifAccount}) not found.')
+                return []
+        else:
+            try:
+                return self.qifObject.accounts[self.qifAccount] if self.qifAccount else self.qifObject.accounts[
+                    'Quiffen Default Account']
+            except KeyError:
+                print(f'Number of accounts = 1 and specified account ({self.qifAccount}) or default account not found.')
+                return []
