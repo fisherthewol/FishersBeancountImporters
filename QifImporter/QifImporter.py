@@ -85,19 +85,12 @@ class QifImporter(importer.ImporterProtocol):
         return datetime.date.today()
 
     def GetQifAccount(self) -> Optional[Account]:
-        if len(self.qifObject.accounts) != 1:
-            try:
-                return self.qifObject.accounts[self.qifAccount]
-            except KeyError:
-                print(f'Number of accounts > 1 and specified account ({self.qifAccount}) not found.')
-                return None
-        else:
-            try:
-                return self.qifObject.accounts[self.qifAccount] if self.qifAccount else self.qifObject.accounts[
-                    'Quiffen Default Account']
-            except KeyError:
-                print(f'Number of accounts = 1 and specified account ({self.qifAccount}) or default account not found.')
-                return None
+        try:
+            return self.qifObject.accounts[self.qifAccount] if self.qifAccount else self.qifObject.accounts[
+                'Quiffen Default Account']
+        except KeyError:
+            print(f'Number of accounts = {len(self.qifObject.accounts)} and specified account ({self.qifAccount}) or default account not found.')
+            return None
 
     @staticmethod
     def GetNarration(transaction: Transaction) -> Optional[str]:
