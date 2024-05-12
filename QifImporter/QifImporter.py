@@ -1,10 +1,11 @@
 import datetime
+from typing import Optional
 
 from beancount.core import flags, data
 from beancount.core.amount import Amount
 from beancount.core.number import D
 from beancount.ingest import importer, cache
-from quiffen import Qif, AccountType, Transaction, ParserException
+from quiffen import Qif, AccountType, Transaction, ParserException, Account
 
 
 class QifImporter(importer.ImporterProtocol):
@@ -22,10 +23,10 @@ class QifImporter(importer.ImporterProtocol):
         self.currency = currency
         self.FLAG = flags.FLAG_OKAY
 
-    def name(self):
-        return f"QifImporter.{self.destinationAccount}"
+    def name(self) -> str:
+        return f'QifImporter.{self.destinationAccount}'
 
-    def identify(self, file: cache._FileMemo):
+    def identify(self, file: cache._FileMemo) -> bool:
         if not file.name.endswith('.qif'):
             return False
 
@@ -36,11 +37,13 @@ class QifImporter(importer.ImporterProtocol):
 
         return True
 
-    def extract(self, file, existing_entries=None):
+    def extract(self, file: cache._FileMemo, existing_entries=None) -> list[data.Transaction]:
         if self.qifObject is None:
             self.qifObject = Qif.parse(file.name, day_first=self.dayFirst)
 
         account = self.GetQifAccount()
+        if not account:
+            return []
 
         if len(account.transactions) != 1:
             print('More than one "transaction" in account.transactions, aborting.')
@@ -75,29 +78,29 @@ class QifImporter(importer.ImporterProtocol):
 
         return txns
 
-    def file_account(self, file: cache._FileMemo):
+    def file_account(self, file: cache._FileMemo) -> str:
         return self.destinationAccount
 
-    def file_date(self, file: cache._FileMemo):
+    def file_date(self, file: cache._FileMemo) -> datetime.date:
         return datetime.date.today()
 
-    def GetQifAccount(self):
+    def GetQifAccount(self) -> Optional[Account]:
         if len(self.qifObject.accounts) != 1:
             try:
                 return self.qifObject.accounts[self.qifAccount]
             except KeyError:
                 print(f'Number of accounts > 1 and specified account ({self.qifAccount}) not found.')
-                return []
+                return None
         else:
             try:
                 return self.qifObject.accounts[self.qifAccount] if self.qifAccount else self.qifObject.accounts[
                     'Quiffen Default Account']
             except KeyError:
                 print(f'Number of accounts = 1 and specified account ({self.qifAccount}) or default account not found.')
-                return []
+                return None
 
     @staticmethod
-    def GetNarration(transaction: Transaction):
+    def GetNarration(transaction: Transaction) -> Optional[str]:
         narrations = []
         if transaction.memo:
             narrations.append(f'Memo: {transaction.memo}')
@@ -114,7 +117,7 @@ class QifImporter(importer.ImporterProtocol):
         return ', '.join(narrations)
 
     @staticmethod
-    def GetInvertSign(accounttype):
+    def GetInvertSign(accounttype: AccountType) -> Optional[bool]:
         match accounttype:
             case AccountType.CASH | AccountType.BANK:
                 return False
