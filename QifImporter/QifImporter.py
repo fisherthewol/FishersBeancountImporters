@@ -55,6 +55,7 @@ class QifImporter(importer.ImporterProtocol):
             return []
 
         txns = []
+        transaction: Transaction
         for transaction in transactionlist:
             meta = data.new_metadata(filename=file.name, lineno=transaction.line_number)
             amount = Amount(-D(transaction.amount), currency=self.currency) if invertSign else Amount(
@@ -66,7 +67,7 @@ class QifImporter(importer.ImporterProtocol):
             )]
             txn = data.Transaction(
                 meta=meta,
-                date=transaction.date,
+                date=transaction.date.date(),
                 flag=self.FLAG,
                 payee=transaction.payee.rstrip(),
                 narration=self.GetNarration(transaction),
