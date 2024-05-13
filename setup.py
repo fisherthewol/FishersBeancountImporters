@@ -8,5 +8,6 @@ setup(
     install_requires=[
         'pypdf>=3.17.0',
         'beancount==2.3.6',
+        'quiffen>=2.0.10'
     ]
 )
