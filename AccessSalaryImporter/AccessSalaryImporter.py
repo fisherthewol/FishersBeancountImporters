@@ -44,16 +44,20 @@ class Importer(importer.ImporterProtocol):
             pensionmatchaccount: str,
             nationalinsuranceaccount: str,
             pensionassetaccount: str,
+            studentloanaccount: str,
             y2kfix: str,
             flag: str = ''):
         """
         Initialise and importer for Access UK Payslips
+        :param studentloanaccount:
         :param salaryaccount: Account to book income from.
         :param currentaccount: Account receiving your Net Pay.
         :param paye: Account to book PAYE tax to.
         :param pensionmatchaccount: Pension Match from Access.
         :param nationalinsuranceaccount: NI Tax account.
         :param pensionassetaccount: Account to contribute pension to.
+        :param studentloanaccount: Account for student loan balance.
+
         :param y2kfix: First 2 digits of year for date (Payslip has y2k bug).
         """
         self.salaryAccount = salaryaccount
@@ -62,6 +66,7 @@ class Importer(importer.ImporterProtocol):
         self.pensionMatch = pensionmatchaccount
         self.NIAccount = nationalinsuranceaccount
         self.PensionAccount = pensionassetaccount
+        self.StudentLoanAccount = studentloanaccount
         self.currency = "GBP"
         self.cachedPDF: str = None
         self.y2kFix = y2kfix
@@ -116,30 +121,30 @@ class Importer(importer.ImporterProtocol):
                 lines
             )
         )[1].split(' ')[2]
+        student_loan = list(
+            filter(
+                lambda line: line.startswith("Student Loan Plan 2"),
+                lines
+            )
+        )[0].split(' ')[4]
 
         meta = data.new_metadata(file.name, 0)
         meta['date']: datetime.date = self.file_date(file)
 
         postings = [
-            # Income as seen in current account.
             data.Posting(
                 account=self.currentAccount,
                 units=Amount(D(netpay), self.currency),
                 cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
-                account=self.salaryAccount,
-                units=Amount(-D(salary), self.currency),
+                account=self.StudentLoanAccount,
+                units=Amount(D(student_loan), self.currency),
                 cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
                 account=self.PAYE,
                 units=Amount(D(paye_tax), self.currency),
-                cost=None, price=None, flag=None, meta=None
-            ),
-            data.Posting(
-                account=self.pensionMatch,
-                units=Amount(D(pension_single), self.currency),
                 cost=None, price=None, flag=None, meta=None
             ),
             data.Posting(
@@ -150,6 +155,16 @@ class Importer(importer.ImporterProtocol):
             data.Posting(
                 account=self.PensionAccount,
                 units=Amount(-D(pension_single) * 2, self.currency),
+                cost=None, price=None, flag=None, meta=None
+            ),
+            data.Posting(
+                account=self.pensionMatch,
+                units=Amount(D(pension_single), self.currency),
+                cost=None, price=None, flag=None, meta=None
+            ),
+            data.Posting(
+                account=self.salaryAccount,
+                units=Amount(-D(salary), self.currency),
                 cost=None, price=None, flag=None, meta=None
             )
         ]
