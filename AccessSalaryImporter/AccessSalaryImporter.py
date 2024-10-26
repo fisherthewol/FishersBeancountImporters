@@ -105,10 +105,10 @@ class Importer(importer.ImporterProtocol):
         )[0].split(' ')[2]
         pension_single = list(
             filter(
-                lambda line: line.startswith("AEGON GPPP"),
+                lambda line: line.startswith("Scottish Widows EE SS"),
                 lines
             )
-        )[0].split(' ')[3]
+        )[0].split(' ')[4]
         paye_tax = list(
             filter(
                 lambda line: line.startswith("PAYE"),
