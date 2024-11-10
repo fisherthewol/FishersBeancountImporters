@@ -5,11 +5,10 @@ name = "pypi"
 
 [packages]
 beancount = "2.3.6"
-fava = "1.27.3"
-pypdf = ">=3.17.0"
-werkzeug = ">=3.0.3"
+fava = "1.29"
+pypdf = "5.1.0"
 setuptools = "*"
-quiffen = "2.0.10"
+quiffen = "2.0.12"
 
 [dev-packages]
 

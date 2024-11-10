@@ -2,12 +2,12 @@ from setuptools import setup, find_packages
 
 setup(
     name="FishersBeanCountImporters",
-    version="0.0.1",
+    version="0.0.2",
     author="fisherthewol",
     packages=find_packages(['AccessSalaryImporter']),
     install_requires=[
-        'pypdf>=3.17.0',
         'beancount==2.3.6',
-        'quiffen>=2.0.10'
+        'pypdf==5.1.0',
+        'quiffen==2.0.12'
     ]
 )
