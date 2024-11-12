@@ -1,1 +1,1 @@
-from AccessSalaryImporter.AccessSalaryImporter import Importer
+from . import AccessSalaryImporter

@@ -7,7 +7,7 @@ from beancount.core.amount import Amount
 from beancount.core.number import D
 from beancount.ingest import importer, cache
 
-from Heuristics.CSVHeuristics import CSVHeuristics
+from ..Heuristics.CSVHeuristics import CSVHeuristics
 
 
 def csv_to_list(filename: str):

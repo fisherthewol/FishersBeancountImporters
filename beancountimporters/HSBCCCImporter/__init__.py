@@ -1,1 +1,1 @@
-from HSBCCCImporter.HSBCCCImporter import Importer
+from . import HSBCCCImporter

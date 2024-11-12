@@ -1,1 +1,1 @@
-from FirstAccountImporter.FirstAccountImporter import Importer
+from . import FirstAccountImporter

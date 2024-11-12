@@ -1,1 +1,1 @@
-from QifImporter.QifImporter import QifImporter
+from . import QifImporter
