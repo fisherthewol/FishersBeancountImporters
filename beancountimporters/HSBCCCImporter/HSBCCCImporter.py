@@ -1,4 +1,3 @@
-import collections
 import csv
 import datetime
 
@@ -6,8 +5,6 @@ from beancount.core import flags, data
 from beancount.core.amount import Amount
 from beancount.core.number import D
 from beancount.ingest import importer, cache
-
-from ..Heuristics.CSVHeuristics import CSVHeuristics
 
 
 def csv_to_list(filename: str):
@@ -23,13 +20,6 @@ class Importer(importer.ImporterProtocol):
         self.creditCardAccount = creditcardaccount
         self.currency = "GBP"
         self.FLAG = flags.FLAG_WARNING if flag == '' else flags.FLAG_OKAY
-        self.heuristics = CSVHeuristics(
-            payeecolumn=1,
-            valuecolumn=2,
-            currency=self.currency,
-            groceriesaccount=groceriesaccount,
-            phoneaccount=phoneaccount,
-            invertvalue=True)
 
     def identify(self, file: cache._FileMemo) -> bool:
         if file.mimetype() != 'text/csv':
@@ -52,8 +42,6 @@ class Importer(importer.ImporterProtocol):
                 units=Amount(D(row[2]), self.currency),
                 cost=None, price=None, flag=None, meta=None
             )]
-            if (identified := self.heuristics.identify(row)) is not None:
-                postings.append(identified)
             splitdate = row[0].split('/')
             d = splitdate[0]
             m = splitdate[1]

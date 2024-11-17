@@ -8,8 +8,6 @@ from beancount.core import flags
 from beancount.core.amount import Amount
 from beancount.core.number import D
 
-from ..Heuristics.CSVHeuristics import CSVHeuristics
-
 
 def csv_to_list(filename: str):
     with open(filename, 'r') as infile:
@@ -20,18 +18,11 @@ def csv_to_list(filename: str):
 class Importer(importer.ImporterProtocol):
     """Beancount importer for FirstDirect 1st Account CSV"""
 
-    def __init__(self, currentaccount: str, groceriesaccount: str, phoneaccount: str, flag: str = ''):
+    def __init__(self, currentaccount: str, flag: str = ''):
         self.currentAccount = currentaccount
         self.currency = "GBP"
         self.FLAG = flags.FLAG_WARNING if flag == '' else flags.FLAG_OKAY
         self.cachedRows: [str] = None
-        self.heuristics = CSVHeuristics(
-            payeecolumn='Description',
-            valuecolumn='Amount',
-            currency=self.currency,
-            groceriesaccount=groceriesaccount,
-            phoneaccount=phoneaccount,
-            invertvalue=True)
 
     def identify(self, file: cache._FileMemo) -> bool:
         if file.mimetype() != 'text/csv':
@@ -58,8 +49,6 @@ class Importer(importer.ImporterProtocol):
                 units=Amount(D(row['Amount']), self.currency),
                 cost=None, price=None, flag=None, meta=None
             )]
-            if (identified := self.heuristics.identify(row)) is not None:
-                postings.append(identified)
             splitdate = row['Date'].split('/')
             d = splitdate[0]
             m = splitdate[1]
