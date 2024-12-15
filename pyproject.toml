@@ -22,3 +22,8 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build]
 dev-mode-dirs = ["."]
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
