@@ -19,9 +19,9 @@ class AccessSalaryTestCase(unittest.TestCase):
             studentloanaccount="StudentLoanAccount",
             y2kfix="20",
             flag="!")
-        self.salaryFile = cache._FileMemo("./TestFiles/2024-10-25 My Payslip 28-OCT-24.pdf")
-        self.amexFile = cache._FileMemo("./TestFiles/Amex.csv")
-        with open("./TestFiles/SalaryText.txt", 'r', encoding="unicode_escape") as file:
+        self.salaryFile = cache._FileMemo("./tests/TestFiles/2024-10-25 My Payslip 28-OCT-24.pdf")
+        self.amexFile = cache._FileMemo("./tests/TestFiles/Amex.csv")
+        with open("./tests/TestFiles/SalaryText.txt", 'r', encoding="unicode_escape") as file:
             self.salaryText = file.read()
 
     def test_pdfToTextCorrectlyExtracts(self):

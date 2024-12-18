@@ -27,3 +27,8 @@ dev-mode-dirs = ["."]
 addopts = [
     "--import-mode=importlib",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.3",
+]
