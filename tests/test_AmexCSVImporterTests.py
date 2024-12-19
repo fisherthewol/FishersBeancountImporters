@@ -6,12 +6,16 @@ from beancount.ingest import cache
 from beancount.core.amount import Amount
 from beancount.core.number import D
 
+from tests.Utilities import GetTestFilesDir
+
+
 class AmexCSVTestCase(unittest.TestCase):
 
     def setUp(self):
         self.importer = Importer(creditcardaccount="CreditCardAccount", flag="!")
-        self.salaryFile = cache._FileMemo("./tests/TestFiles/2024-10-25 My Payslip 28-OCT-24.pdf")
-        self.amexFile = cache._FileMemo("./tests/TestFiles/Amex.csv")
+        testFilesDir = GetTestFilesDir()
+        self.salaryFile = cache._FileMemo((testFilesDir / "2024-10-25 My Payslip 28-OCT-24.pdf").absolute().as_posix())
+        self.amexFile = cache._FileMemo((testFilesDir / "Amex.csv").absolute().as_posix())
 
     def test_CSVToListImportsCorrectly(self):
         listResult = csv_to_list(self.amexFile.name)

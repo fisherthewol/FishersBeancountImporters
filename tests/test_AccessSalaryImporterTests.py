@@ -1,9 +1,12 @@
 import datetime
 import unittest
+from pathlib import Path
 from beancountimporters.AccessSalaryImporter.AccessSalaryImporter import Importer, pdf_to_text
 from beancount.ingest import cache
 from beancount.core.amount import Amount
 from beancount.core.number import D
+
+from tests.Utilities import GetTestFilesDir
 
 
 class AccessSalaryTestCase(unittest.TestCase):
@@ -19,9 +22,10 @@ class AccessSalaryTestCase(unittest.TestCase):
             studentloanaccount="StudentLoanAccount",
             y2kfix="20",
             flag="!")
-        self.salaryFile = cache._FileMemo("./tests/TestFiles/2024-10-25 My Payslip 28-OCT-24.pdf")
-        self.amexFile = cache._FileMemo("./tests/TestFiles/Amex.csv")
-        with open("./tests/TestFiles/SalaryText.txt", 'r', encoding="unicode_escape") as file:
+        testFilesDir = GetTestFilesDir()
+        self.salaryFile = cache._FileMemo((testFilesDir / "2024-10-25 My Payslip 28-OCT-24.pdf").absolute().as_posix())
+        self.amexFile = cache._FileMemo((testFilesDir / "Amex.csv").absolute().as_posix())
+        with open((testFilesDir / "SalaryText.txt").absolute().as_posix(), 'r', encoding="unicode_escape") as file:
             self.salaryText = file.read()
 
     def test_pdfToTextCorrectlyExtracts(self):
@@ -83,7 +87,6 @@ class AccessSalaryTestCase(unittest.TestCase):
         grossPay = postings[6]
         self.assertEqual(grossPay.account, "SalaryAccount")
         self.assertEqual(grossPay.units, Amount(-D("2,833.33"), "GBP"))
-
 
 
 if __name__ == '__main__':
