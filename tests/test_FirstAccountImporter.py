@@ -21,7 +21,7 @@ class FirstAccountTestCase(unittest.TestCase):
         listResult = csv_to_list(self.firstDirectFile.name)
         self.assertEqual(len(listResult), 18)
 
-    def test_ImporterCorrectlyIdentifiesAmexCSV(self):
+    def test_ImporterCorrectlyIdentifiesFDCSV(self):
         fdIdentify = self.importer.identify(self.firstDirectFile)
         self.assertEqual(fdIdentify, True)
 
@@ -34,7 +34,7 @@ class FirstAccountTestCase(unittest.TestCase):
         self.assertEqual(account, "CurrentAccount")
 
     def test_FileDate(self):
-        date = self.importer.file_date(self.amexFile)
+        date = self.importer.file_date(self.firstDirectFile)
         self.assertEqual(date, datetime.date.today())
 
     def test_Extract(self):
