@@ -20,6 +20,7 @@ class Importer(importer.ImporterProtocol):
         self.creditCardAccount = creditcardaccount
         self.currency = "GBP"
         self.FLAG = flags.FLAG_WARNING if flag == '' else flags.FLAG_OKAY
+        self.cachedRows: [str] = None
 
     def identify(self, file: cache._FileMemo) -> bool:
         if file.mimetype() != 'text/csv':
