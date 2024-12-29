@@ -1,3 +1,4 @@
+import decimal
 import unittest
 import datetime
 
@@ -7,7 +8,7 @@ from beancount.core.number import D
 from beancountimporters.QifImporter.QifImporter import QifImporter
 from tests.Utilities import GetTestFilesDir
 
-from quiffen import Qif
+from quiffen import Qif, Category, Transaction
 
 
 class QifTestCase(unittest.TestCase):
@@ -17,6 +18,7 @@ class QifTestCase(unittest.TestCase):
         testFilesDir = GetTestFilesDir()
         self.salaryFile = cache._FileMemo((testFilesDir / "2024-10-25 My Payslip 28-OCT-24.pdf").absolute().as_posix())
         self.lloydsCcFile = cache._FileMemo((testFilesDir / "LloydsCC.qif").absolute().as_posix())
+        self.dummyQifObject = Qif.parse(self.lloydsCcFile.name, day_first=True)
 
     def test_Name(self):
         self.assertEqual(self.importer.name(), "QifImporter.DestinationAccount")
@@ -61,19 +63,62 @@ class QifTestCase(unittest.TestCase):
         self.assertEqual(str(exception), "QifObject is None so an account cannot be determined.")
 
     def test_GetQifDAccountReturnsDefaultAccount(self):
-        self.importer.qifObject = Qif.parse(self.lloydsCcFile.name, day_first=True)
+        self.importer.qifObject = self.dummyQifObject
         qifAccount = self.importer.GetQifAccount()
         self.assertEqual(qifAccount.name, "Quiffen Default Account")
         self.importer.qifObject = None
         self.importer.qifAccount = ""
 
     def test_GetQifAccountReturnsNoneForBadAccount(self):
-        self.importer.qifObject = Qif.parse(self.lloydsCcFile.name, day_first=True)
+        self.importer.qifObject = self.dummyQifObject
         self.importer.qifAccount = "BadAccount"
         qifAccount = self.importer.GetQifAccount()
         self.assertEqual(qifAccount, None)
         self.importer.qifObject = None
         self.importer.qifAccount = ""
+
+    def test_GetNarration(self):
+        tran = Transaction(
+            date=datetime.datetime.now(),
+            amount=decimal.Decimal(100),
+        )
+        # Assert an empty transaction returns None.
+        narrationNoInfo = QifImporter.GetNarration(transaction=tran)
+        self.assertEqual(narrationNoInfo, None)
+
+        # Category returns category.
+        cat = Category(name="TestCategory")
+        tran.category = cat
+        narrationCatOnly = QifImporter.GetNarration(transaction=tran)
+        self.assertEqual(narrationCatOnly, f"Category: {str(cat)}")
+        tran.category = None
+
+        # Memo returns Memo.
+        tran.memo = "TestMemo"
+        narrationMemoOnly = QifImporter.GetNarration(transaction=tran)
+        self.assertEqual(narrationMemoOnly, "Memo: TestMemo")
+        tran.memo = None
+
+        # Cleared returns formatted date.
+        tran.cleared = str(datetime.datetime(2024, 12, 29, 12, 00, 00, 00))
+        narrationClearedOnly = QifImporter.GetNarration(transaction=tran)
+        self.assertEqual(narrationClearedOnly, f"Cleared: {str(datetime.datetime(2024, 12, 29, 12, 00, 00, 00))}")
+        tran.cleared = None
+
+        # CheckNumber returns CheckNumber
+        tran.check_number = 12456
+        narrationCheckOnly = QifImporter.GetNarration(transaction=tran)
+        self.assertEqual(narrationCheckOnly, "Check Number: 12456")
+        tran.check_number = None
+
+        # All returns a comma list:
+        tran.category = cat
+        tran.memo = "TestMemo"
+        tran.cleared = str(datetime.datetime(2024, 12, 29, 12, 00, 00, 00))
+        tran.check_number = 12456
+        narrationAll = QifImporter.GetNarration(transaction=tran)
+        self.assertEqual(narrationAll,
+                         f"Memo: TestMemo, Cleared: {str(datetime.datetime(2024, 12, 29, 12, 00, 00, 00))}, Category: {str(cat)}, Check Number: 12456")
 
 
 if __name__ == '__main__':
