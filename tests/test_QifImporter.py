@@ -8,7 +8,7 @@ from beancount.core.number import D
 from beancountimporters.QifImporter.QifImporter import QifImporter
 from tests.Utilities import GetTestFilesDir
 
-from quiffen import Qif, Category, Transaction
+from quiffen import Qif, Category, Transaction, AccountType
 
 
 class QifTestCase(unittest.TestCase):
@@ -119,6 +119,44 @@ class QifTestCase(unittest.TestCase):
         narrationAll = QifImporter.GetNarration(transaction=tran)
         self.assertEqual(narrationAll,
                          f"Memo: TestMemo, Cleared: {str(datetime.datetime(2024, 12, 29, 12, 00, 00, 00))}, Category: {str(cat)}, Check Number: 12456")
+
+    def test_GetInvertSign(self):
+        # Assert currently unhandled account types return None
+        acc = AccountType("Oth A")
+        actual = QifImporter.GetInvertSign(acc)
+        self.assertEqual(actual, None)
+        acc = AccountType("Oth L")
+        actual = QifImporter.GetInvertSign(acc)
+        self.assertEqual(actual, None)
+        acc = AccountType("Invoice")
+        actual = QifImporter.GetInvertSign(acc)
+        self.assertEqual(actual, None)
+        acc = AccountType("Invst")
+        actual = QifImporter.GetInvertSign(acc)
+        self.assertEqual(actual, None)
+        acc = AccountType("Unknown")
+        actual = QifImporter.GetInvertSign(acc)
+        self.assertEqual(actual, None)
+
+        """
+        So I'm currently assuming, based on how Lloyds produces QIF, that
+        * Transactions are always from the perspective of growing a balance
+        * Ergo for Asset Accounts, If the transaction is a positive, then it is a payment in, which increases its balance.
+        * And for Liability Accounts, If the transaction is a positive, then it is a payment out, which increases the balance /owed/.
+        Which is represented as a negative on the liability account, so we need to decrease the balance, inverting the sign.
+        """
+        # Assert that "Asset" accounts return false
+        acc = AccountType("Cash")
+        actual = QifImporter.GetInvertSign(acc)
+        self.assertEqual(actual, False)
+        acc = AccountType("Bank")
+        actual = QifImporter.GetInvertSign(acc)
+        self.assertEqual(actual, False)
+
+        # And that "Liability" accounts return True.
+        acc = AccountType("CCard")
+        actual = QifImporter.GetInvertSign(acc)
+        self.assertEqual(actual, True)
 
 
 if __name__ == '__main__':
