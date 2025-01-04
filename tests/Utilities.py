@@ -9,4 +9,5 @@ def GetTestFilesDir():
         case "BeancountImporters":
             return Path("./tests/TestFiles")
         case _:
+            print(f"cwd: {cwd}")
             raise ValueError("Current Working Directory isn't the right place.")

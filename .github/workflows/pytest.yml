@@ -20,7 +20,9 @@ jobs:
           version: "latest"
           enable-cache: true
 
-      - name: ls
-        run: ls -l
-      - name: pwd
-        run: pwd
+      - name: Sync dependencies.
+        run: uv sync --all-extras --dev
+
+      - name: Run tests with coverage.
+        run: uv run pytest tests
+
