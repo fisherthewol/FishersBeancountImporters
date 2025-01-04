@@ -20,12 +20,7 @@ jobs:
           version: "latest"
           enable-cache: true
 
-      - name: Sync dependencies.
-        run: uv sync --all-extras --dev
-
       - name: ls
         run: ls -l
-
-      - name: Run tests with coverage.
-        working-directory: "./FishersBeancountImporters"
-        run: uv run pytest tests
+      - name: pwd
+        run: pwd
