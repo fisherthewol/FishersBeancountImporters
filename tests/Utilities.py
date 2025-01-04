@@ -6,7 +6,7 @@ def GetTestFilesDir():
     match cwd.parts[-1]:
         case "tests":
             return Path("./TestFiles")
-        case "BeancountImporters", "FishersBeancountImporters":
+        case  "FishersBeancountImporters" | "BeancountImporters":
             return Path("./tests/TestFiles")
         case _:
             print(f"cwd: {cwd}")
