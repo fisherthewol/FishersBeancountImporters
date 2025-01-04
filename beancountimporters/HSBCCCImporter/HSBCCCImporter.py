@@ -16,10 +16,11 @@ def csv_to_list(filename: str):
 class Importer(importer.ImporterProtocol):
     """Imports HSBC CSVs"""
 
-    def __init__(self, creditcardaccount: str, groceriesaccount: str, phoneaccount: str, flag: str = ''):
+    def __init__(self, creditcardaccount: str, flag: str = ''):
         self.creditCardAccount = creditcardaccount
         self.currency = "GBP"
         self.FLAG = flags.FLAG_WARNING if flag == '' else flags.FLAG_OKAY
+        self.cachedRows: [str] = None
 
     def identify(self, file: cache._FileMemo) -> bool:
         if file.mimetype() != 'text/csv':

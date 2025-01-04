@@ -86,6 +86,8 @@ class QifImporter(importer.ImporterProtocol):
         return datetime.date.today()
 
     def GetQifAccount(self) -> Optional[Account]:
+        if self.qifObject is None:
+            raise ValueError("QifObject is None so an account cannot be determined.")
         try:
             return self.qifObject.accounts[self.qifAccount] if self.qifAccount else self.qifObject.accounts[
                 'Quiffen Default Account']
