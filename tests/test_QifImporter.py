@@ -1,6 +1,7 @@
 import decimal
 import unittest
 import datetime
+from decimal import Decimal
 
 from beancount.ingest import cache
 from beancount.core.amount import Amount
@@ -18,6 +19,7 @@ class QifTestCase(unittest.TestCase):
         testFilesDir = GetTestFilesDir()
         self.salaryFile = cache._FileMemo((testFilesDir / "2024-10-25 My Payslip 28-OCT-24.pdf").absolute().as_posix())
         self.lloydsCcFile = cache._FileMemo((testFilesDir / "LloydsCC.qif").absolute().as_posix())
+        self.lloydsCurrentFile = cache._FileMemo((testFilesDir / "lloydsCurrentJan25.qif").absolute().as_posix())
         self.dummyQifObject = Qif.parse(self.lloydsCcFile.name, day_first=True)
 
     def test_Name(self):
@@ -157,6 +159,18 @@ class QifTestCase(unittest.TestCase):
         acc = AccountType("CCard")
         actual = QifImporter.GetInvertSign(acc)
         self.assertEqual(actual, True)
+
+    def test_DecimalPointsAutofilled(self):
+        txns = self.importer.extract(self.lloydsCurrentFile)
+        self.assertEqual(len(txns), 27)
+
+        testTxn = txns[4]
+        self.assertEqual(testTxn.date, datetime.date(2025, 2, 3))
+
+        posting = testTxn.postings[0]
+        self.assertEqual(posting.account, "DestinationAccount")
+        self.assertEqual(str(posting.units.number), "0.50")
+
 
 
 if __name__ == '__main__':

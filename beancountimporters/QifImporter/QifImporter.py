@@ -58,8 +58,9 @@ class QifImporter(importer.ImporterProtocol):
         transaction: Transaction
         for transaction in transactionlist:
             meta = data.new_metadata(filename=file.name, lineno=transaction.line_number)
-            amount = Amount(-D(transaction.amount), currency=self.currency) if invertSign else Amount(
-                D(transaction.amount), currency=self.currency)
+            formattedAmount = format(transaction.amount, '.2f')
+            amount = Amount(-D(formattedAmount), currency=self.currency) if invertSign else Amount(
+                D(formattedAmount), currency=self.currency)
             postings = [data.Posting(
                 account=self.destinationAccount,
                 units=amount,
