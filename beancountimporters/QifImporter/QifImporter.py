@@ -4,7 +4,7 @@ from typing import Optional
 from beancount.core import flags, data
 from beancount.core.amount import Amount
 from beancount.core.number import D
-from beancount.ingest import importer, cache
+from beangulp import importer, cache
 from quiffen import Qif, AccountType, Transaction, ParserException, Account
 
 

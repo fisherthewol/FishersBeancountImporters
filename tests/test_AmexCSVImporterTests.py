@@ -2,7 +2,7 @@ import unittest
 import datetime
 import unittest
 from beancountimporters.AmexCSVImporter.AmexCSVImporter import Importer, csv_to_list
-from beancount.ingest import cache
+from beangulp import cache
 from beancount.core.amount import Amount
 from beancount.core.number import D
 

@@ -3,7 +3,7 @@ import unittest
 import datetime
 from decimal import Decimal
 
-from beancount.ingest import cache
+from beangulp import cache
 from beancount.core.amount import Amount
 from beancount.core.number import D
 from beancountimporters.QifImporter.QifImporter import QifImporter

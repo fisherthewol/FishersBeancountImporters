@@ -1,8 +1,7 @@
 import datetime
 import unittest
-from pathlib import Path
 from beancountimporters.AccessSalaryImporter.AccessSalaryImporter import Importer, pdf_to_text
-from beancount.ingest import cache
+from beangulp import cache
 from beancount.core.amount import Amount
 from beancount.core.number import D
 

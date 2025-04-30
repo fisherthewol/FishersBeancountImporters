@@ -1,6 +1,6 @@
 def main():
     import AccessSalaryImporter
-    from beancount.ingest import cache
+    from beangulp import cache
     import os
 
     # fc = cache.get_file(os.getcwd() + "/AccessSalaryImporter/My Payslip 22-DEC-22.pdf")
@@ -9,7 +9,7 @@ def main():
     # x = imp.extract(fc)
     # print(x)
     import FirstAccountImporter
-    from beancount.ingest import cache
+    from beangulp import cache
     fc = cache.get_file(os.getcwd() + "/FirstAccountImporter/25012023_1621.csv")
     imp = FirstAccountImporter.Importer(currentaccount="current", groceriesaccount="groceries", phoneaccount="phoneac", flag="*")
     x = imp.identify(fc)

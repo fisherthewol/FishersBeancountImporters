@@ -1,7 +1,7 @@
 import datetime
 
 from pypdf import PdfReader
-from beancount.ingest import importer, cache
+from beangulp import importer, cache
 from beancount.core import data
 from beancount.core import flags
 from beancount.core.amount import Amount
