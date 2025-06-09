@@ -1,7 +1,7 @@
 [project]
 name = "beancountimporters"
-version = "0.0.4"
-description = "A bunch of importers for beancount (2.X)/fava."
+version = "0.0.5"
+description = "A bunch of importers for beancount/fava."
 readme = "README.md"
 authors = [
     { name = "George Kokinis", email = "george.kokinis@gmail.com" }
