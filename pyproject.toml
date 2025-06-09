@@ -1,16 +1,17 @@
 [project]
 name = "beancountimporters"
-version = "0.0.4"
-description = "A bunch of importers for beancount (2.X)/fava."
+version = "0.0.5"
+description = "A bunch of importers for beancount/fava."
 readme = "README.md"
 authors = [
     { name = "George Kokinis", email = "george.kokinis@gmail.com" }
 ]
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "beancount==2.3.6",
+    "beancount==3.1.0",
+    "beangulp==0.2.0",
     "coverage==7.6.9",
-    "fava>=1.29",
+    "fava==1.30.2",
     "numpy==1.26.4",
     "pypdf>=5.1.0",
     "quiffen>=2.0.12",

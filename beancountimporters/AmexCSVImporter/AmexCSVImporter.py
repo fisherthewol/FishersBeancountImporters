@@ -4,7 +4,7 @@ import datetime
 from beancount.core import flags, data
 from beancount.core.amount import Amount
 from beancount.core.number import D
-from beancount.ingest import importer, cache
+from beangulp import importer, cache
 
 
 def csv_to_list(filename: str):
