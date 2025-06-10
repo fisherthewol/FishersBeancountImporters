@@ -17,6 +17,10 @@ class ofxTestCase(unittest.TestCase):
     def test_Name(self):
         self.assertEqual("ofxImporter.DestinationAccount", self.importer.name())
 
+    def test_ImporterCorrectlyIdentifiesNatwestOFX(self):
+        natwestIdentify = self.importer.identify(self.natwestCcFile)
+        self.assertTrue(natwestIdentify)
+
 
 if __name__ == '__main__':
     unittest.main()

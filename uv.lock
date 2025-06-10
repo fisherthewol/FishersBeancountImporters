@@ -62,6 +62,7 @@ dependencies = [
     { name = "coverage" },
     { name = "fava" },
     { name = "numpy" },
+    { name = "ofxtools" },
     { name = "pypdf" },
     { name = "quiffen" },
 ]
@@ -78,6 +79,7 @@ requires-dist = [
     { name = "coverage", specifier = "==7.6.9" },
     { name = "fava", specifier = "==1.30.2" },
     { name = "numpy", specifier = "==1.26.4" },
+    { name = "ofxtools", specifier = ">=0.9.5" },
     { name = "pypdf", specifier = ">=5.1.0" },
     { name = "quiffen", specifier = ">=2.0.12" },
 ]
@@ -383,6 +385,12 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/28/4a/46d9e65106879492374999e76eb85f87b15328e06bd1550668f79f7b18c6/numpy-1.26.4-cp312-cp312-win32.whl", hash = "sha256:50193e430acfc1346175fcbdaa28ffec49947a06918b7b92130744e81e640110", size = 5677803 },
     { url = "https://files.pythonhosted.org/packages/16/2e/86f24451c2d530c88daf997cb8d6ac622c1d40d19f5a031ed68a4b73a374/numpy-1.26.4-cp312-cp312-win_amd64.whl", hash = "sha256:08beddf13648eb95f8d867350f6a018a4be2e5ad54c8d8caed89ebca558b2818", size = 15517754 },
 ]
+
+[[package]]
+name = "ofxtools"
+version = "0.9.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ce/37/d224428cbb44b8d36b9458c2c9b11eb54ece95bc455ef6f7ada583809b13/ofxtools-0.9.5.tar.gz", hash = "sha256:682a516bfa5ccad0f9551c17cc2cf155422f9f5f85a341cfb4911b324de46045", size = 114090 }
 
 [[package]]
 name = "packaging"
