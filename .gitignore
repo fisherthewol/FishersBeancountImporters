@@ -2,6 +2,7 @@
 *.pdf
 *.qif
 *.txt
+*.ofx
 *.egg-info/
 build/
 .idea/
