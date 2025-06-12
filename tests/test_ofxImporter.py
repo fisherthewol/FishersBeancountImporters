@@ -33,6 +33,9 @@ class ofxTestCase(unittest.TestCase):
         date = self.importer.file_date(self.natwestCcFile)
         self.assertEqual(datetime.date.today(), date)
 
+    def test_Extract(self):
+        txns = self.importer.extract(self.natwestCcFile, [])
+        self.assertEqual(27, len(txns))
 
 
 if __name__ == '__main__':

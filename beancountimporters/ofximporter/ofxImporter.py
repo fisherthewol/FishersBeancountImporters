@@ -1,9 +1,11 @@
 import datetime
 
-from beancount.core import flags
+from beancount.core import flags, data
+from beancount.core.amount import Amount
 from beangulp import importer, cache
 from ofxtools.Types import OFXSpecError
 from ofxtools.Parser import OFXTree
+from ofxtools.models.base import Aggregate
 
 class ofxImporter(importer.ImporterProtocol):
     """Importer for ofx files."""
@@ -22,17 +24,51 @@ class ofxImporter(importer.ImporterProtocol):
             return False
 
         try:
-            parser = OFXTree()
-            with open(file.name, 'rb') as f:
-                parser.parse(f)
-            self.ofxtree = parser.convert()
+            self.ofxtree = self.fileToOfxAggregate(file)
         except OFXSpecError:
             return False
 
         return True
+
+    def extract(self, file: cache._FileMemo, existing: data.Entries) -> data.Entries:
+        if self.ofxtree is None:
+            self.ofxtree = self.fileToOfxAggregate(file)
+
+        statement = self.ofxtree.statements[0]
+        transactions = statement.transactions
+        txns = []
+        for idx, transaction in enumerate(transactions):
+            meta = data.new_metadata(filename=file.name, lineno=idx)
+            amount = Amount(transaction.trnamt, currency=self.currency)
+            postings = [data.Posting(
+                account=self.destinationaccount,
+                units=amount,
+                cost=None, price=None, flag=None, meta=None
+            )]
+
+            txn = data.Transaction(
+                meta=meta,
+                date=transaction.dtposted,
+                flag=self.FLAG,
+                payee=transaction.name,
+                narration=transaction.memo,
+                postings=postings,
+                tags=data.EMPTY_SET,
+                links=data.EMPTY_SET,
+            )
+            txns.append(txn)
+
+        return txns
 
     def file_account(self, file: cache._FileMemo) -> str:
         return self.destinationaccount
 
     def file_date(self, file: cache._FileMemo):
         return datetime.date.today()
+
+    @staticmethod
+    def fileToOfxAggregate(file: cache._FileMemo) -> Aggregate :
+        parser = OFXTree()
+        with open(file.name, 'rb') as f:
+            parser.parse(f)
+        return parser.convert()
