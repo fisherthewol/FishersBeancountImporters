@@ -3,9 +3,10 @@ import datetime
 from beancount.core import flags, data
 from beancount.core.amount import Amount, D
 from beangulp import importer, cache
-from ofxtools.Types import OFXSpecError
 from ofxtools.Parser import OFXTree
+from ofxtools.Types import OFXSpecError
 from ofxtools.models.base import Aggregate
+
 
 class ofxImporter(importer.ImporterProtocol):
     """Importer for ofx files."""
@@ -82,7 +83,7 @@ class ofxImporter(importer.ImporterProtocol):
         )
 
     @staticmethod
-    def fileToOfxAggregate(file: cache._FileMemo) -> Aggregate :
+    def fileToOfxAggregate(file: cache._FileMemo) -> Aggregate:
         parser = OFXTree()
         with open(file.name, 'rb') as f:
             parser.parse(f)

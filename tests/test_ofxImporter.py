@@ -1,7 +1,10 @@
 import datetime
 import unittest
 
+from beancount.core.amount import Amount
+from beancount.core.number import D
 from beangulp import cache
+
 from beancountimporters.ofximporter.ofxImporter import ofxImporter
 from tests.Utilities import GetTestFilesDir
 
@@ -36,6 +39,23 @@ class ofxTestCase(unittest.TestCase):
     def test_Extract(self):
         txns = self.importer.extract(self.natwestCcFile, [])
         self.assertEqual(27, len(txns))
+
+        testTxn = txns[2]
+        self.assertEqual(datetime.date(2025, 5, 14), testTxn.date.date())
+        self.assertEqual("DB FERNVERKEHR AG", testTxn.payee)
+        self.assertEqual("FRANKFURT  20.40 EUR", testTxn.narration)
+        self.assertEqual(2, len(testTxn.postings))
+        self.assertEqual(frozenset(), testTxn.tags)
+        self.assertEqual(frozenset(), testTxn.links)
+
+        eurPosting = testTxn.postings[0]
+        self.assertEqual("REPLACEME", eurPosting.account)
+        self.assertEqual(Amount(D("20.40"), "EUR"), eurPosting.units)
+        self.assertEqual(Amount(D("17.26"), "GBP"), eurPosting.price)
+
+        gbpPosting = testTxn.postings[1]
+        self.assertEqual("DestinationAccount", gbpPosting.account)
+        self.assertEqual(Amount(D("-17.26"), "GBP"), gbpPosting.units)
 
 
 if __name__ == '__main__':
