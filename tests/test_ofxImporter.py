@@ -1,5 +1,6 @@
 import datetime
 import unittest
+from decimal import Decimal
 
 from beancount.core.amount import Amount
 from beancount.core.number import D
@@ -56,6 +57,14 @@ class ofxTestCase(unittest.TestCase):
         gbpPosting = testTxn.postings[1]
         self.assertEqual("DestinationAccount", gbpPosting.account)
         self.assertEqual(Amount(D("-17.26"), "GBP"), gbpPosting.units)
+
+    def test_PossibleEURPosting(self):
+        transaction = type('',(object,),{"memo": "TEST 20.00 EUR", "trnamt": Decimal("-15.00")})()
+        posting = self.importer.PossibleEURPosting(transaction)
+
+        self.assertEqual("REPLACEME", posting.account)
+        self.assertEqual(Amount(D("20.00"), "EUR"), posting.units)
+        self.assertEqual(Amount(D("15.00"), "GBP"), posting.price)
 
 
 if __name__ == '__main__':
