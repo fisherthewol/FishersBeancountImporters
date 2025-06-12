@@ -1,7 +1,7 @@
 import datetime
 
 from beancount.core import flags, data
-from beancount.core.amount import Amount
+from beancount.core.amount import Amount, D
 from beangulp import importer, cache
 from ofxtools.Types import OFXSpecError
 from ofxtools.Parser import OFXTree
@@ -45,6 +45,8 @@ class ofxImporter(importer.ImporterProtocol):
                 units=amount,
                 cost=None, price=None, flag=None, meta=None
             )]
+            if eurPosting := self.PossibleEURPosting(transaction):
+                postings.insert(0, eurPosting)
 
             txn = data.Transaction(
                 meta=meta,
@@ -65,6 +67,19 @@ class ofxImporter(importer.ImporterProtocol):
 
     def file_date(self, file: cache._FileMemo):
         return datetime.date.today()
+
+    def PossibleEURPosting(self, transaction) -> data.Posting | None:
+        if not transaction.memo.endswith('EUR'):
+            return None
+
+        eurAmount = transaction.memo.split(' ')[-2]
+
+        return data.Posting(
+            account="REPLACEME",
+            units=Amount(D(eurAmount), currency='EUR'),
+            price=Amount(-transaction.trnamt, currency=self.currency),
+            cost=None, flag=None, meta=None
+        )
 
     @staticmethod
     def fileToOfxAggregate(file: cache._FileMemo) -> Aggregate :
