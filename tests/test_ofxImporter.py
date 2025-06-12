@@ -1,3 +1,4 @@
+import datetime
 import unittest
 
 from beangulp import cache
@@ -23,6 +24,15 @@ class ofxTestCase(unittest.TestCase):
     def test_ImporterCorrectlyDeniesLloydsCC(self):
         lloydsIdentify = self.importer.identify(self.lloydsCcFile)
         self.assertFalse(lloydsIdentify)
+
+    def test_FileAccount(self):
+        account = self.importer.file_account(self.natwestCcFile)
+        self.assertEqual("DestinationAccount", account)
+
+    def test_FileDate(self):
+        date = self.importer.file_date(self.natwestCcFile)
+        self.assertEqual(datetime.date.today(), date)
+
 
 
 if __name__ == '__main__':

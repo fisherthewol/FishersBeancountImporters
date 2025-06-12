@@ -1,3 +1,5 @@
+import datetime
+
 from beancount.core import flags
 from beangulp import importer, cache
 from ofxtools.Types import OFXSpecError
@@ -28,3 +30,9 @@ class ofxImporter(importer.ImporterProtocol):
             return False
 
         return True
+
+    def file_account(self, file: cache._FileMemo) -> str:
+        return self.destinationaccount
+
+    def file_date(self, file: cache._FileMemo):
+        return datetime.date.today()
