@@ -10,7 +10,6 @@ class ofxTestCase(unittest.TestCase):
     def setUp(self):
         self.importer = ofxImporter(destinationaccount="DestinationAccount")
         testFilesDir = GetTestFilesDir()
-        self.salaryFile = cache._FileMemo((testFilesDir / "2024-10-25 My Payslip 28-OCT-24.pdf").absolute().as_posix())
         self.lloydsCcFile = cache._FileMemo((testFilesDir / "LloydsCC.qif").absolute().as_posix())
         self.natwestCcFile = cache._FileMemo((testFilesDir / "natwestcc.ofx").absolute().as_posix())
 
@@ -20,6 +19,10 @@ class ofxTestCase(unittest.TestCase):
     def test_ImporterCorrectlyIdentifiesNatwestOFX(self):
         natwestIdentify = self.importer.identify(self.natwestCcFile)
         self.assertTrue(natwestIdentify)
+
+    def test_ImporterCorrectlyDeniesLloydsCC(self):
+        lloydsIdentify = self.importer.identify(self.lloydsCcFile)
+        self.assertFalse(lloydsIdentify)
 
 
 if __name__ == '__main__':
