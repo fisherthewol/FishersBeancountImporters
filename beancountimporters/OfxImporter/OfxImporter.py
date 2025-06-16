@@ -3,13 +3,13 @@ from typing import Optional
 
 from beancount.core import flags, data
 from beancount.core.amount import Amount, D
-from beangulp import Importer
+from beangulp import Importer as BeanImporter
 from ofxtools.Parser import OFXTree
 from ofxtools.Types import OFXSpecError
 from ofxtools.models.base import Aggregate
 
 
-class ImporterOfx(Importer):
+class Importer(BeanImporter):
     """Importer for ofx files."""
 
     def __init__(self, destinationaccount: str, currency: str = 'GBP'):
@@ -18,6 +18,7 @@ class ImporterOfx(Importer):
         self.ofxtree = None
         self.FLAG = flags.FLAG_OKAY
 
+    @property
     def name(self) -> str:
         return f"ofxImporter.{self.destinationaccount.split(':')[-1]}"
 
@@ -45,9 +46,11 @@ class ImporterOfx(Importer):
         if self.ofxtree is None:
             self.ofxtree = self.fileToOfxAggregate(filepath)
 
-        statement = self.ofxtree.statements[0]
-        transactions = statement.transactions
+        statement: CCSTMTRS = self.ofxtree.statements[0]
+        transactions: BANKTRANLIST = statement.transactions
         txns = []
+        idx: int
+        transaction: STMTTRN
         for idx, transaction in enumerate(transactions):
             meta = data.new_metadata(filename=filepath, lineno=idx)
             amount = Amount(transaction.trnamt, currency=self.currency)
@@ -61,7 +64,7 @@ class ImporterOfx(Importer):
 
             txn = data.Transaction(
                 meta=meta,
-                date=transaction.dtposted,
+                date=transaction.dtposted.date(),
                 flag=self.FLAG,
                 payee=transaction.name,
                 narration=transaction.memo,

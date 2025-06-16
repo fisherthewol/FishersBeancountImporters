@@ -6,20 +6,20 @@ from beancount.core.amount import Amount
 from beancount.core.number import D
 from beangulp import cache
 
-from beancountimporters.OfxImporter.OfxImporter import ImporterOfx
+from beancountimporters.OfxImporter.OfxImporter import Importer
 from tests.Utilities import GetTestFilesDir
 
 
 class ofxTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.importer = ImporterOfx(destinationaccount="DestinationAccount")
+        self.importer = Importer(destinationaccount="DestinationAccount")
         testFilesDir = GetTestFilesDir()
         self.lloydsCcFile = (testFilesDir / "LloydsCC.qif").absolute().as_posix()
         self.natwestCcFile = (testFilesDir / "natwestcc.ofx").absolute().as_posix()
 
     def test_Name(self):
-        self.assertEqual("ofxImporter.DestinationAccount", self.importer.name())
+        self.assertEqual("ofxImporter.DestinationAccount", self.importer.name)
 
     def test_ImporterCorrectlyIdentifiesNatwestOFX(self):
         natwestIdentify = self.importer.identify(self.natwestCcFile)
@@ -42,7 +42,7 @@ class ofxTestCase(unittest.TestCase):
         self.assertEqual(27, len(txns))
 
         testTxn = txns[2]
-        self.assertEqual(datetime.date(2025, 5, 14), testTxn.date.date())
+        self.assertEqual(datetime.date(2025, 5, 14), testTxn.date)
         self.assertEqual("DB FERNVERKEHR AG", testTxn.payee)
         self.assertEqual("FRANKFURT  20.40 EUR", testTxn.narration)
         self.assertEqual(2, len(testTxn.postings))
