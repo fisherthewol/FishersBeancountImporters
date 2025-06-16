@@ -1,14 +1,15 @@
 import datetime
+from typing import Optional
 
 from beancount.core import flags, data
 from beancount.core.amount import Amount, D
-from beangulp import importer, cache
+from beangulp import Importer
 from ofxtools.Parser import OFXTree
 from ofxtools.Types import OFXSpecError
 from ofxtools.models.base import Aggregate
 
 
-class Importer(importer.ImporterProtocol):
+class Importer(Importer):
     """Importer for ofx files."""
 
     def __init__(self, destinationaccount: str, currency: str = 'GBP'):
@@ -18,28 +19,37 @@ class Importer(importer.ImporterProtocol):
         self.FLAG = flags.FLAG_OKAY
 
     def name(self) -> str:
-        return f"ofxImporter.{self.destinationaccount}"
+        return f"ofxImporter.{self.destinationaccount.split(':')[-1]}"
 
-    def identify(self, file: cache._FileMemo) -> bool:
-        if not file.name.endswith(".ofx"):
+    def identify(self, filepath: str) -> bool:
+        if not filepath.endswith(".ofx"):
             return False
 
         try:
-            self.ofxtree = self.fileToOfxAggregate(file)
+            self.ofxtree = self.fileToOfxAggregate(filepath)
         except OFXSpecError:
             return False
 
         return True
 
-    def extract(self, file: cache._FileMemo, existing: data.Entries) -> data.Entries:
+    def account(self, filepath: str) -> data.Account:
+        return data.Account(self.destinationaccount)
+
+    def date(self, filepath: str) -> Optional[datetime.date]:
+        return datetime.date.today()
+
+    def filename(self, filepath: str) -> Optional[str]:
+        return f"{datetime.date.today()}-Statement.ofx"
+
+    def extract(self, filepath: str, existing: data.Entries) -> data.Entries:
         if self.ofxtree is None:
-            self.ofxtree = self.fileToOfxAggregate(file)
+            self.ofxtree = self.fileToOfxAggregate(filepath)
 
         statement = self.ofxtree.statements[0]
         transactions = statement.transactions
         txns = []
         for idx, transaction in enumerate(transactions):
-            meta = data.new_metadata(filename=file.name, lineno=idx)
+            meta = data.new_metadata(filename=filepath, lineno=idx)
             amount = Amount(transaction.trnamt, currency=self.currency)
             postings = [data.Posting(
                 account=self.destinationaccount,
@@ -63,12 +73,6 @@ class Importer(importer.ImporterProtocol):
 
         return txns
 
-    def file_account(self, file: cache._FileMemo) -> str:
-        return self.destinationaccount
-
-    def file_date(self, file: cache._FileMemo):
-        return datetime.date.today()
-
     def PossibleEURPosting(self, transaction) -> data.Posting | None:
         if not transaction.memo.endswith('EUR'):
             return None
@@ -83,8 +87,8 @@ class Importer(importer.ImporterProtocol):
         )
 
     @staticmethod
-    def fileToOfxAggregate(file: cache._FileMemo) -> Aggregate:
+    def fileToOfxAggregate(filepath: str) -> Aggregate:
         parser = OFXTree()
-        with open(file.name, 'rb') as f:
+        with open(filepath, 'rb') as f:
             parser.parse(f)
         return parser.convert()

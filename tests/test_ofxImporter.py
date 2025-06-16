@@ -15,8 +15,8 @@ class ofxTestCase(unittest.TestCase):
     def setUp(self):
         self.importer = Importer(destinationaccount="DestinationAccount")
         testFilesDir = GetTestFilesDir()
-        self.lloydsCcFile = cache._FileMemo((testFilesDir / "LloydsCC.qif").absolute().as_posix())
-        self.natwestCcFile = cache._FileMemo((testFilesDir / "natwestcc.ofx").absolute().as_posix())
+        self.lloydsCcFile = (testFilesDir / "LloydsCC.qif").absolute().as_posix()
+        self.natwestCcFile = (testFilesDir / "natwestcc.ofx").absolute().as_posix()
 
     def test_Name(self):
         self.assertEqual("ofxImporter.DestinationAccount", self.importer.name())
@@ -30,11 +30,11 @@ class ofxTestCase(unittest.TestCase):
         self.assertFalse(lloydsIdentify)
 
     def test_FileAccount(self):
-        account = self.importer.file_account(self.natwestCcFile)
+        account = self.importer.account(self.natwestCcFile)
         self.assertEqual("DestinationAccount", account)
 
     def test_FileDate(self):
-        date = self.importer.file_date(self.natwestCcFile)
+        date = self.importer.date(self.natwestCcFile)
         self.assertEqual(datetime.date.today(), date)
 
     def test_Extract(self):
