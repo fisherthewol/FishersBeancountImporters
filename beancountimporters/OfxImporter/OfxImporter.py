@@ -9,7 +9,7 @@ from ofxtools.Types import OFXSpecError
 from ofxtools.models.base import Aggregate
 
 
-class Importer(Importer):
+class ImporterOfx(Importer):
     """Importer for ofx files."""
 
     def __init__(self, destinationaccount: str, currency: str = 'GBP'):
