@@ -52,7 +52,7 @@ class ofxTestCase(unittest.TestCase):
         eurPosting = testTxn.postings[0]
         self.assertEqual("REPLACEME", eurPosting.account)
         self.assertEqual(Amount(D("20.40"), "EUR"), eurPosting.units)
-        self.assertEqual(Amount(D("17.26"), "GBP"), eurPosting.price)
+        self.assertEqual(Amount(D("1.1819"), "GBP"), eurPosting.price)
 
         gbpPosting = testTxn.postings[1]
         self.assertEqual("DestinationAccount", gbpPosting.account)

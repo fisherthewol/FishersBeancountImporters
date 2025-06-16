@@ -1,5 +1,6 @@
 import datetime
 from typing import Optional
+from decimal import *
 
 from beancount.core import flags, data
 from beancount.core.amount import Amount, D
@@ -80,12 +81,12 @@ class Importer(BeanImporter):
         if not transaction.memo.endswith('EUR'):
             return None
 
-        eurAmount = transaction.memo.split(' ')[-2]
-
+        eurDecimal = D(transaction.memo.split(' ')[-2])
+        conversionRate = (-eurDecimal / transaction.trnamt).quantize(Decimal('0.0001'), ROUND_HALF_UP)
         return data.Posting(
             account="REPLACEME",
-            units=Amount(D(eurAmount), currency='EUR'),
-            price=Amount(-transaction.trnamt, currency=self.currency),
+            units=Amount(eurDecimal, currency='EUR'),
+            price=Amount(conversionRate, currency=self.currency),
             cost=None, flag=None, meta=None
         )
 
