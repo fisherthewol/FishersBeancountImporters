@@ -64,7 +64,7 @@ class ofxTestCase(unittest.TestCase):
 
         self.assertEqual("REPLACEME", posting.account)
         self.assertEqual(Amount(D("20.00"), "EUR"), posting.units)
-        self.assertEqual(Amount(D("15.00"), "GBP"), posting.price)
+        self.assertEqual(Amount(D("0.75"), "GBP"), posting.price)
 
 
 if __name__ == '__main__':

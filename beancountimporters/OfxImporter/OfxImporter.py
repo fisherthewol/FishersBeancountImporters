@@ -47,11 +47,9 @@ class Importer(BeanImporter):
         if self.ofxtree is None:
             self.ofxtree = self.fileToOfxAggregate(filepath)
 
-        statement: CCSTMTRS = self.ofxtree.statements[0]
-        transactions: BANKTRANLIST = statement.transactions
+        statement = self.ofxtree.statements[0]
+        transactions = statement.transactions
         txns = []
-        idx: int
-        transaction: STMTTRN
         for idx, transaction in enumerate(transactions):
             meta = data.new_metadata(filename=filepath, lineno=idx)
             amount = Amount(transaction.trnamt, currency=self.currency)
@@ -82,7 +80,7 @@ class Importer(BeanImporter):
             return None
 
         eurDecimal = D(transaction.memo.split(' ')[-2])
-        conversionRate = (-eurDecimal / transaction.trnamt).quantize(Decimal('0.0001'), ROUND_HALF_UP)
+        conversionRate = (-transaction.trnamt / eurDecimal).quantize(Decimal('0.0001'), ROUND_HALF_UP)
         return data.Posting(
             account="REPLACEME",
             units=Amount(eurDecimal, currency='EUR'),
