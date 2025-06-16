@@ -3,3 +3,4 @@ from .AmexCSVImporter import AmexCSVImporter
 from .FirstAccountImporter import FirstAccountImporter
 from .HSBCCCImporter import HSBCCCImporter
 from .QifImporter import QifImporter
+from .OfxImporter import OfxImporter

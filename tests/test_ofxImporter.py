@@ -6,14 +6,14 @@ from beancount.core.amount import Amount
 from beancount.core.number import D
 from beangulp import cache
 
-from beancountimporters.ofximporter.ofxImporter import ofxImporter
+from beancountimporters.OfxImporter.OfxImporter import Importer
 from tests.Utilities import GetTestFilesDir
 
 
 class ofxTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.importer = ofxImporter(destinationaccount="DestinationAccount")
+        self.importer = Importer(destinationaccount="DestinationAccount")
         testFilesDir = GetTestFilesDir()
         self.lloydsCcFile = cache._FileMemo((testFilesDir / "LloydsCC.qif").absolute().as_posix())
         self.natwestCcFile = cache._FileMemo((testFilesDir / "natwestcc.ofx").absolute().as_posix())
