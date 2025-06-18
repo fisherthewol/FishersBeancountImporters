@@ -47,6 +47,19 @@ class Importer(importer.ImporterProtocol):
                 units=Amount(-D(row['Amount']), self.currency),
                 cost=None, price=None, flag=None, meta=None
             )]
+
+            # If a payment, insert expenseaccount posting first; else we append (cc posting first).
+            if postings[0].units.number < 0:
+                postings.insert(0, data.Posting(
+                    account="REPLACEME",
+                    units=Amount(D(row['Amount']), self.currency),
+                    cost=None, price=None, flag=None, meta=None))
+            else:
+                postings.append(data.Posting(
+                    account="REPLACEME",
+                    units=Amount(D(row['Amount']), self.currency),
+                    cost=None, price=None, flag=None, meta=None))
+
             splitdate = row['Date'].split('/')
             d = splitdate[0]
             m = splitdate[1]

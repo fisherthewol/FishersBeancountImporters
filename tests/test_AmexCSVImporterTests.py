@@ -45,12 +45,12 @@ class AmexCSVTestCase(unittest.TestCase):
         self.assertEqual(testTxn.date, datetime.date(2024, 10, 18))
         self.assertEqual(testTxn.payee, None)
         self.assertEqual(testTxn.narration, "GEORGE MICHNIEWICZ - MC HULL")
-        self.assertEqual(len(testTxn.postings), 1)
+        self.assertEqual(len(testTxn.postings), 2)
         self.assertEqual(testTxn.meta["reference"], "'AT242930041000011728613'")
         self.assertEqual(testTxn.tags, frozenset())
         self.assertEqual(testTxn.links, frozenset())
 
-        posting = testTxn.postings[0]
+        posting = testTxn.postings[1]
         self.assertEqual(posting.account, "CreditCardAccount")
         self.assertEqual(posting.units, Amount(-D("2.19"), "GBP"))
 

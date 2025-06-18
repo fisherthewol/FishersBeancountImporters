@@ -1,6 +1,6 @@
 [project]
 name = "beancountimporters"
-version = "0.0.6"
+version = "0.0.7"
 description = "A bunch of importers for beancount/fava."
 readme = "README.md"
 authors = [
