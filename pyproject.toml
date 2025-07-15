@@ -1,12 +1,12 @@
 [project]
 name = "beancountimporters"
-version = "0.0.7"
+version = "0.0.8"
 description = "A bunch of importers for beancount/fava."
 readme = "README.md"
 authors = [
     { name = "George Kokinis", email = "george.kokinis@gmail.com" }
 ]
-requires-python = ">=3.12,<3.13"
+requires-python = ">=3.13,<3.14"
 dependencies = [
     "beancount==3.1.0",
     "beangulp==0.2.0",
@@ -14,7 +14,7 @@ dependencies = [
     "fava==1.30.3",
     "ofxtools>=0.9.5",
     "pypdf==5.6.1",
-    "quiffen==3.0.0",
+    "quiffen",
 ]
 
 [build-system]
@@ -28,6 +28,9 @@ dev-mode-dirs = ["."]
 addopts = [
     "--import-mode=importlib",
 ]
+
+[tool.uv.sources]
+quiffen = { path = "../quiffen" }
 
 [dependency-groups]
 dev = [
