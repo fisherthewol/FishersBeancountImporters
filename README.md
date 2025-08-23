@@ -1,2 +1,2 @@
-# FishersBeancountImporters
-A bunch of importers for [Beancount](https://github.com/beancount/beancount/).
+# Migrated
+Migrated to https://git.sr.ht/~fisherthewol/BeancountImporters
